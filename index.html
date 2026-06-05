@@ -1,0 +1,2526 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIMEO — Gestão de Desastres · SEDEC-RJ</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #f0f4f8;
+  --surface:   #ffffff;
+  --surface2:  #f8fafc;
+  --surface3:  #eef2f7;
+  --border:    #dde3ed;
+  --border2:   #c8d2e0;
+
+  --red:       #dc2626;
+  --red-light: #fef2f2;
+  --red-mid:   #fee2e2;
+  --orange:    #ea580c;
+  --orange-light: #fff7ed;
+  --yellow:    #d97706;
+  --yellow-light: #fffbeb;
+  --green:     #16a34a;
+  --green-light: #f0fdf4;
+  --blue:      #2563eb;
+  --blue-light: #eff6ff;
+  --cyan:      #0891b2;
+  --cyan-light:#ecfeff;
+  --indigo:    #4f46e5;
+  --indigo-light:#eef2ff;
+
+  --text:      #0f172a;
+  --text-2:    #334155;
+  --text-3:    #64748b;
+  --text-4:    #94a3b8;
+
+  --p-max:       #dc2626;
+  --p-very-high: #ea580c;
+  --p-high:      #d97706;
+  --p-med-high:  #16a34a;
+  --p-med:       #0891b2;
+  --p-low:       #4f46e5;
+  --p-very-low:  #94a3b8;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+  --shadow:    0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06);
+
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ══ HEADER ══ */
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 62px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo { display: flex; align-items: center; gap: 14px; }
+.logo-icon {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--red) 0%, #b91c1c 100%);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -1px;
+  box-shadow: 0 2px 8px rgba(220,38,38,0.35);
+}
+.logo-name {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: var(--text);
+}
+.logo-sub {
+  font-size: 10px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
+  margin-top: 1px;
+}
+.header-right { display: flex; align-items: center; gap: 16px; }
+.header-incident {
+  background: var(--yellow-light);
+  border: 1px solid #fde68a;
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--yellow);
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.live-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--red-light);
+  border: 1px solid #fecaca;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--red);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.live-dot {
+  width: 7px; height: 7px;
+  background: var(--red);
+  border-radius: 50%;
+  animation: blink 1.6s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+/* ══ LAYOUT ══ */
+.app-layout { display: flex; min-height: calc(100vh - 62px); }
+
+/* ══ SIDEBAR ══ */
+nav {
+  width: 230px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 20px 0 20px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 62px;
+  height: calc(100vh - 62px);
+  overflow-y: auto;
+}
+.nav-group { margin-bottom: 6px; }
+.nav-group-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-4);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 20px 6px;
+}
+.nav-btn {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; padding: 9px 20px;
+  background: none; border: none;
+  color: var(--text-3);
+  font-family: var(--font-body);
+  font-size: 13.5px; font-weight: 500;
+  cursor: pointer; text-align: left;
+  transition: all 0.14s;
+  border-radius: 0;
+  border-left: 3px solid transparent;
+}
+.nav-btn:hover { background: var(--surface2); color: var(--text-2); }
+.nav-btn.active {
+  background: var(--blue-light);
+  color: var(--blue);
+  border-left-color: var(--blue);
+  font-weight: 700;
+}
+.nav-icon { font-size: 15px; width: 20px; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto;
+  background: var(--red);
+  color: white;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  min-width: 22px;
+  text-align: center;
+  font-weight: 500;
+}
+.nav-divider { height: 1px; background: var(--border); margin: 10px 16px; }
+
+/* ══ MAIN ══ */
+main { flex: 1; padding: 28px; overflow-y: auto; max-width: 100%; }
+
+/* ══ SCREENS ══ */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ══ PAGE HEADER ══ */
+.page-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 24px; padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.page-title { font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
+.page-sub { font-size: 13px; color: var(--text-3); margin-top: 3px; }
+
+/* ══ CARDS ══ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-sm);
+}
+.card-title {
+  font-size: 13px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--text-3);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 7px;
+}
+
+/* ══ GRIDS ══ */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+
+/* ══ FORMS ══ */
+label {
+  display: block;
+  font-size: 11px; font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+input, select, textarea {
+  background: var(--surface);
+  border: 1.5px solid var(--border2);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  padding: 9px 13px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+select option { background: white; }
+.form-group { margin-bottom: 15px; }
+
+/* ══ BUTTONS ══ */
+.btn {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  padding: 9px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary { background: var(--blue); color: white; box-shadow: 0 2px 6px rgba(37,99,235,0.3); }
+.btn-primary:hover { background: #1d4ed8; box-shadow: 0 3px 10px rgba(37,99,235,0.4); }
+.btn-danger { background: var(--red); color: white; box-shadow: 0 2px 6px rgba(220,38,38,0.3); }
+.btn-danger:hover { background: #b91c1c; }
+.btn-ghost { background: transparent; border: 1.5px solid var(--border2); color: var(--text-3); }
+.btn-ghost:hover { border-color: var(--text-3); color: var(--text-2); background: var(--surface2); }
+.btn-sm { padding: 5px 11px; font-size: 12px; }
+
+/* ══ PRIORITY BADGES ══ */
+.priority-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.5px; padding: 4px 10px;
+  border-radius: 20px; white-space: nowrap;
+}
+.priority-badge.max       { background: var(--red-mid);      color: var(--red);      border: 1px solid #fca5a5; }
+.priority-badge.very-high { background: #ffedd5;              color: var(--orange);   border: 1px solid #fed7aa; }
+.priority-badge.high      { background: #fef3c7;              color: var(--yellow);   border: 1px solid #fde68a; }
+.priority-badge.med-high  { background: #dcfce7;              color: var(--green);    border: 1px solid #86efac; }
+.priority-badge.med       { background: var(--cyan-light);    color: var(--cyan);     border: 1px solid #a5f3fc; }
+.priority-badge.low       { background: var(--indigo-light);  color: var(--indigo);   border: 1px solid #c7d2fe; }
+.priority-badge.very-low  { background: #f8fafc;              color: var(--text-3);   border: 1px solid var(--border); }
+
+/* ══ STATS ══ */
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+}
+.stat-number { font-size: 40px; font-weight: 800; line-height: 1; margin-bottom: 4px; letter-spacing: -1px; }
+.stat-label  { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px; }
+
+/* ══ TABLES ══ */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.data-table th {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text-3);
+  padding: 10px 14px; border-bottom: 2px solid var(--border);
+  text-align: left; white-space: nowrap;
+  background: var(--surface2);
+}
+.data-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--surface2); }
+
+/* ══ ACTION CARDS ══ */
+.action-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid;
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s;
+}
+.action-card:hover { box-shadow: var(--shadow); }
+.action-card.max       { border-left-color: var(--red); }
+.action-card.very-high { border-left-color: var(--orange); }
+.action-card.high      { border-left-color: var(--yellow); }
+.action-card.med-high  { border-left-color: var(--green); }
+.action-card.med       { border-left-color: var(--cyan); }
+.action-card.low       { border-left-color: var(--indigo); }
+.action-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+.action-title { font-weight: 700; font-size: 14.5px; flex: 1; color: var(--text); }
+.action-meta { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+.action-meta-item { font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 4px; }
+.action-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.action-tag {
+  background: var(--surface3); border: 1px solid var(--border);
+  border-radius: 6px; font-size: 11.5px; color: var(--text-2);
+  padding: 3px 9px;
+}
+
+/* ══ RESOURCE CARDS ══ */
+.resource-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 15px 18px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: start;
+  transition: box-shadow 0.15s;
+}
+.resource-card:hover { box-shadow: var(--shadow); }
+.resource-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.resource-specialty { font-size: 12.5px; color: var(--blue); font-weight: 600; margin-bottom: 7px; }
+.resource-meta { display: flex; gap: 14px; flex-wrap: wrap; }
+.resource-meta-item { font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 4px; }
+
+/* ══ TRANSPORT COLS ══ */
+.transport-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-bottom: 18px; }
+.transport-col {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.transport-col-header {
+  font-size: 13px; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface2);
+}
+.transport-col-header.terra { color: var(--green); border-top: 3px solid var(--green); }
+.transport-col-header.agua  { color: var(--cyan);  border-top: 3px solid var(--cyan); }
+.transport-col-header.ar    { color: var(--blue);  border-top: 3px solid var(--blue); }
+.transport-item { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.transport-item:last-child { border-bottom: none; }
+.transport-item-type { font-weight: 700; font-size: 13.5px; margin-bottom: 3px; }
+.transport-item-meta { font-size: 11.5px; color: var(--text-3); }
+
+/* ══ GUT ══ */
+.gut-category-title {
+  font-size: 13px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.gut-category-title.gravity { color: var(--red); }
+.gut-category-title.urgency { color: var(--orange); }
+.gut-category-title.tendency { color: var(--cyan); }
+
+.gut-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  display: grid;
+  grid-template-columns: 180px 1fr 54px;
+  gap: 14px;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+}
+.gut-item-label { font-size: 12.5px; font-weight: 700; color: var(--text-2); line-height: 1.3; }
+.gut-weight-badge {
+  display: inline-block;
+  background: var(--surface3); border: 1px solid var(--border);
+  color: var(--text-3); font-size: 9px; font-family: var(--font-mono);
+  padding: 1px 5px; border-radius: 4px; margin-top: 3px;
+}
+.gut-options-row { display: flex; gap: 5px; }
+.gut-opt {
+  flex: 1; padding: 8px 4px;
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 6px; text-align: center;
+  font-size: 11px; color: var(--text-3);
+  cursor: pointer; transition: all 0.12s; line-height: 1.3;
+  min-width: 0;
+}
+.gut-opt:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+.gut-opt.selected { background: var(--blue); color: white; border-color: var(--blue); font-weight: 700; }
+.gut-opt.selected.s5 { background: var(--red); border-color: var(--red); }
+.gut-opt.selected.s4 { background: var(--orange); border-color: var(--orange); }
+.gut-opt.selected.s3 { background: var(--yellow); border-color: var(--yellow); color: white; }
+.gut-opt.selected.s2 { background: var(--green); border-color: var(--green); }
+.gut-opt.selected.s1 { background: var(--text-3); border-color: var(--text-3); }
+.gut-score { font-size: 22px; font-weight: 800; text-align: right; color: var(--text-3); }
+
+.gut-result-box {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-top: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 100%;
+}
+.gut-result-score { font-size: 44px; font-weight: 800; line-height: 1; letter-spacing: -2px; }
+.gut-result-label { font-size: 10px; font-weight: 700; color: var(--text-3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+
+/* ══ MATRIX TABLE ══ */
+.matrix-table { width: 100%; border-collapse: collapse; min-width: 680px; }
+.matrix-table th {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
+  text-transform: uppercase; color: var(--text-2);
+  padding: 11px 10px; border: 1px solid var(--border);
+  text-align: center; background: var(--surface2);
+}
+.matrix-table td { border: 1px solid var(--border); padding: 13px 10px; text-align: center; font-weight: 700; font-size: 12px; }
+.matrix-table td.row-label {
+  text-align: left; padding: 10px 14px;
+  font-size: 12px; font-weight: 600;
+  color: var(--text-2); background: var(--surface2); white-space: nowrap;
+}
+.m-A { background: #fee2e2; color: #991b1b; }
+.m-B { background: #ffedd5; color: #9a3412; }
+.m-C { background: #fef9c3; color: #92400e; }
+.m-D { background: #dcfce7; color: #166534; }
+.m-E { background: #cffafe; color: #155e75; }
+.m-F { background: #e0e7ff; color: #3730a3; }
+.m-N { background: #f8fafc; color: var(--text-4); font-weight: 400; font-size: 10px; }
+
+/* ══ HOME HERO ══ */
+.home-hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 40%, #2563eb 100%);
+  border-radius: var(--radius);
+  padding: 32px 36px;
+  margin-bottom: 24px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+.home-hero::before {
+  content: '';
+  position: absolute; top: -40px; right: -40px;
+  width: 220px; height: 220px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+}
+.home-hero::after {
+  content: '';
+  position: absolute; bottom: -60px; right: 80px;
+  width: 150px; height: 150px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
+}
+.hero-title { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; line-height: 1.1; }
+.hero-sub   { font-size: 14px; opacity: 0.8; margin-bottom: 24px; }
+.incident-form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end; }
+.incident-form label { color: rgba(255,255,255,0.7); }
+.incident-form input {
+  background: rgba(255,255,255,0.12);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: white; border-radius: var(--radius-sm);
+}
+.incident-form input::placeholder { color: rgba(255,255,255,0.4); }
+.incident-form input:focus { border-color: rgba(255,255,255,0.6); box-shadow: 0 0 0 3px rgba(255,255,255,0.12); }
+.btn-hero {
+  background: white; color: var(--blue);
+  font-weight: 800; border: none;
+  padding: 9px 22px; border-radius: var(--radius-sm);
+  cursor: pointer; font-family: var(--font-body);
+  font-size: 13px; letter-spacing: 0.3px;
+  display: flex; align-items: center; gap: 6px;
+  transition: all 0.15s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.btn-hero:hover { background: #f0f9ff; box-shadow: 0 4px 12px rgba(0,0,0,0.25); }
+
+/* ══ VIA CARDS ══ */
+.via-card {
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  display: flex; align-items: flex-start; gap: 12px;
+  margin-bottom: 8px;
+  border: 1px solid;
+}
+.via-card.terra { background: #f0fdf4; border-color: #86efac; }
+.via-card.agua  { background: #ecfeff; border-color: #67e8f9; }
+.via-card.ar    { background: #eff6ff; border-color: #93c5fd; }
+.via-card-icon  { font-size: 20px; }
+.via-card-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+.via-card-desc  { font-size: 11.5px; color: var(--text-3); }
+
+/* ══ MODAL ══ */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(15,23,42,0.5);
+  backdrop-filter: blur(4px);
+  z-index: 200; display: none;
+  align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-lg);
+  width: 660px; max-width: 95vw;
+  max-height: 90vh; overflow-y: auto;
+  padding: 28px;
+}
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 22px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-title { font-size: 18px; font-weight: 800; color: var(--text); }
+.modal-close {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--text-3);
+  width: 30px; height: 30px; cursor: pointer;
+  font-size: 14px; display: flex; align-items: center; justify-content: center;
+  transition: all 0.14s;
+}
+.modal-close:hover { background: var(--red-light); color: var(--red); border-color: #fca5a5; }
+
+/* ══ TABS ══ */
+.tab-row {
+  display: flex; gap: 3px; margin-bottom: 20px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 4px;
+}
+.tab-btn {
+  font-family: var(--font-body); font-weight: 600; font-size: 12.5px;
+  padding: 7px 14px; background: transparent; border: none;
+  color: var(--text-3); cursor: pointer; border-radius: 6px;
+  transition: all 0.14s; white-space: nowrap;
+}
+.tab-btn:hover { color: var(--text-2); background: var(--surface); }
+.tab-btn.active { background: var(--surface); color: var(--blue); font-weight: 700; box-shadow: var(--shadow-sm); }
+
+/* ══ EMPTY STATE ══ */
+.empty-state {
+  text-align: center; padding: 44px 20px;
+  color: var(--text-3); font-size: 13px;
+}
+.empty-state-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.35; }
+.empty-state-text { font-weight: 600; }
+
+/* ══ NOTIFICATION ══ */
+.notif {
+  position: fixed; bottom: 22px; right: 22px;
+  background: var(--text); color: white;
+  border-radius: var(--radius-sm);
+  padding: 12px 18px; font-size: 13px; font-weight: 500;
+  z-index: 300; transform: translateX(140%);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: var(--shadow-lg); max-width: 300px;
+}
+.notif.show { transform: translateX(0); }
+
+/* ══ DATE RANGE PICKER ══ */
+.date-range-wrapper { position: relative; }
+.date-range-display {
+  background: var(--surface); border: 1.5px solid var(--border2);
+  border-radius: var(--radius-sm); padding: 9px 13px;
+  font-size: 13.5px; color: var(--text);
+  cursor: pointer; display: flex; align-items: center; gap: 8px;
+  user-select: none; transition: border-color 0.15s, box-shadow 0.15s;
+}
+.date-range-display:hover { border-color: var(--blue); }
+.date-range-display.active { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+.date-range-display .icon { color: var(--text-3); }
+.date-range-display .value { flex: 1; }
+.date-range-display .placeholder { color: var(--text-4); }
+.date-picker-popup {
+  position: absolute; top: calc(100% + 6px); left: 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow-lg);
+  z-index: 500; padding: 16px; width: 540px; max-width: 95vw;
+  display: none;
+}
+.date-picker-popup.open { display: block; }
+.date-picker-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px;
+}
+.date-picker-title { font-size: 13px; font-weight: 700; color: var(--text-2); }
+.date-picker-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.date-picker-col label { margin-bottom: 6px; font-size: 10px; }
+.date-picker-input {
+  border: 1.5px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px; font-size: 13px;
+  color: var(--text); background: var(--surface);
+  width: 100%; outline: none;
+  font-family: var(--font-body);
+}
+.date-picker-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+.date-picker-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+.date-picker-summary {
+  margin-top: 10px; padding: 8px 12px;
+  background: var(--blue-light); border: 1px solid #bfdbfe;
+  border-radius: var(--radius-sm);
+  font-size: 12px; color: var(--blue); font-weight: 600;
+  display: none;
+}
+.date-picker-summary.visible { display: block; }
+.duration-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--surface3); border: 1px solid var(--border);
+  border-radius: 20px; font-size: 11px; color: var(--text-3);
+  padding: 2px 9px; margin-top: 6px;
+}
+
+/* ══ SECTION LABEL ══ */
+.section-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-3);
+  display: flex; align-items: center; gap: 10px; margin: 20px 0 12px;
+}
+.section-label::after { content:''; flex:1; height:1px; background: var(--border); }
+
+/* color utilities */
+.text-red    { color: var(--red); }
+.text-orange { color: var(--orange); }
+.text-yellow { color: var(--yellow); }
+.text-blue   { color: var(--blue); }
+.text-cyan   { color: var(--cyan); }
+.text-green  { color: var(--green); }
+.text-muted  { color: var(--text-3); }
+
+/* ══ RESOURCE SELECTOR ══ */
+.resource-selector { position: relative; }
+.rs-display {
+  background: var(--surface); border: 1.5px solid var(--border2);
+  border-radius: var(--radius-sm); padding: 9px 13px;
+  font-size: 13.5px; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  transition: border-color 0.15s, box-shadow 0.15s; user-select: none;
+  min-height: 40px;
+}
+.rs-display:hover { border-color: var(--blue); }
+.rs-display.open { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+.rs-placeholder { color: var(--text-4); font-size: 13.5px; }
+.rs-arrow { color: var(--text-3); font-size: 11px; flex-shrink: 0; transition: transform 0.15s; }
+.rs-display.open .rs-arrow { transform: rotate(180deg); }
+.rs-selected-count {
+  background: var(--blue); color: white; border-radius: 12px;
+  font-size: 11px; font-weight: 700; padding: 1px 8px;
+}
+.rs-dropdown {
+  display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow-lg);
+  z-index: 400; overflow: hidden;
+}
+.rs-dropdown.open { display: block; }
+.rs-search-wrap { padding: 10px 10px 6px; border-bottom: 1px solid var(--border); }
+.rs-search {
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 7px 11px;
+  font-size: 13px; width: 100%; outline: none;
+  font-family: var(--font-body); color: var(--text);
+}
+.rs-search:focus { border-color: var(--blue); }
+.rs-list { max-height: 200px; overflow-y: auto; padding: 6px 0; }
+.rs-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 9px 14px; cursor: pointer; transition: background 0.1s;
+}
+.rs-item:hover { background: var(--surface2); }
+.rs-item.selected { background: var(--blue-light); }
+.rs-checkbox {
+  width: 16px; height: 16px; border-radius: 4px;
+  border: 2px solid var(--border2); flex-shrink: 0; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface); transition: all 0.12s;
+}
+.rs-item.selected .rs-checkbox { background: var(--blue); border-color: var(--blue); }
+.rs-checkbox-tick { color: white; font-size: 10px; display: none; }
+.rs-item.selected .rs-checkbox-tick { display: block; }
+.rs-item-main { flex: 1; min-width: 0; }
+.rs-item-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.rs-item-sub  { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+.rs-empty { padding: 18px; text-align: center; color: var(--text-4); font-size: 12.5px; }
+.rs-footer {
+  padding: 8px 12px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.rs-hint { font-size: 11px; color: var(--text-4); }
+.rs-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+.rs-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--blue-light); border: 1px solid #bfdbfe;
+  border-radius: 20px; padding: 3px 10px 3px 8px;
+  font-size: 12px; font-weight: 600; color: var(--blue);
+}
+.rs-tag-remove {
+  cursor: pointer; color: var(--blue); opacity: 0.6;
+  font-size: 13px; line-height: 1; padding: 0 1px;
+}
+.rs-tag-remove:hover { opacity: 1; }
+
+@media (max-width: 900px) {
+  nav { width: 56px; }
+  .nav-btn span:not(.nav-icon):not(.nav-badge) { display: none; }
+  .nav-group-label { display: none; }
+  .incident-form { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: 1fr 1fr; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .transport-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">S</div>
+    <div>
+      <div style="display:flex;align-items:baseline;gap:10px;">
+        <div class="logo-name">SIMEO</div>
+        <div style="font-size:11px;font-weight:500;color:var(--text-3);letter-spacing:0.3px;white-space:nowrap;">Sistema Integrado de Matrizes Estratégicas e Operacionais</div>
+      </div>
+      <div class="logo-sub">Alexandre Cardeman · SEDEC-RJ / GIGR-SEIF</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-incident" id="header-incident">— Nenhum incidente ativo —</div>
+    <div class="live-badge"><div class="live-dot"></div> Operacional</div>
+  </div>
+</header>
+
+<div class="app-layout">
+
+<!-- SIDEBAR -->
+<nav>
+  <div class="nav-group">
+    <div class="nav-group-label">Principal</div>
+    <button class="nav-btn active" onclick="showScreen('home')">
+      <span class="nav-icon">🏠</span><span>Início</span>
+    </button>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-group">
+    <div class="nav-group-label">Prioridades</div>
+    <button class="nav-btn" onclick="showScreen('actions')">
+      <span class="nav-icon">🎯</span><span>Ações</span>
+      <span class="nav-badge" id="badge-actions">0</span>
+    </button>
+    <button class="nav-btn" onclick="showScreen('gut-resgate')">
+      <span class="nav-icon">🚨</span><span>GUT — Resgate</span>
+    </button>
+    <button class="nav-btn" onclick="showScreen('gut-geral')">
+      <span class="nav-icon">⚠️</span><span>GUT — Geral</span>
+    </button>
+    <button class="nav-btn" onclick="showScreen('matrix')">
+      <span class="nav-icon">📊</span><span>Matriz de Risco / Prioridade</span>
+    </button>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-group">
+    <div class="nav-group-label">Recursos</div>
+    <button class="nav-btn" onclick="showScreen('human')">
+      <span class="nav-icon">👥</span><span>Humanos</span>
+      <span class="nav-badge" id="badge-human">0</span>
+    </button>
+    <button class="nav-btn" onclick="showScreen('transport')">
+      <span class="nav-icon">🚗</span><span>Transporte</span>
+      <span class="nav-badge" id="badge-transport">0</span>
+    </button>
+    <button class="nav-btn" onclick="showScreen('equipment')">
+      <span class="nav-icon">🔧</span><span>Equipamentos</span>
+      <span class="nav-badge" id="badge-equip">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main>
+
+<!-- ══════════ HOME ══════════ -->
+<div id="screen-home" class="screen active">
+  <div class="home-hero">
+    <div class="hero-title">Desastres de Grande Magnitude</div>
+    <div class="hero-sub">Gestão integrada de prioridades e recursos em emergências de chuvas intensas</div>
+
+    <!-- Linha 1: Incidente + Ativar -->
+    <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-bottom:10px;">
+      <div class="form-group" style="margin:0">
+        <label>Identificação do Incidente</label>
+        <input type="text" id="incident-name" placeholder="ex: Enchente Petrópolis — Maio 2025">
+      </div>
+      <button class="btn-hero" onclick="setIncident()" style="height:40px;white-space:nowrap;">⚡ Ativar Incidente</button>
+    </div>
+
+    <!-- Linha 2: Área com mapa -->
+    <div class="form-group" style="margin:0">
+      <label>Área / Região afetada</label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="text" id="incident-area" placeholder="ex: Petrópolis — Centro e Alto" style="flex:1;">
+        <button onclick="openMapPicker()" title="Marcar no mapa" style="
+          height:40px;width:44px;flex-shrink:0;
+          background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);
+          border-radius:var(--radius-sm);cursor:pointer;color:white;font-size:18px;
+          display:flex;align-items:center;justify-content:center;transition:all 0.15s;
+        " onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+          📍
+        </button>
+      </div>
+      <div id="incident-map-preview" style="display:none;margin-top:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:var(--radius-sm);padding:6px 10px;font-size:12px;color:rgba(255,255,255,0.85);display:flex;align-items:center;gap:6px;">
+        <span>📍</span><span id="incident-coords-label"></span>
+        <button onclick="clearMapPin()" style="margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;font-size:13px;">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-4" style="margin-bottom:24px;">
+    <div class="stat-card">
+      <div class="stat-number text-red" id="stat-max">0</div>
+      <div class="stat-label">Prioridade Máxima</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number text-orange" id="stat-very-high">0</div>
+      <div class="stat-label">Prioridade Muito Alta</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number text-blue" id="stat-human-total">0</div>
+      <div class="stat-label">Recursos Humanos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number text-green" id="stat-transport-total">0</div>
+      <div class="stat-label">Meios de Transporte</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">📋 Como usar</div>
+      <p style="font-size:13.5px;color:var(--text-2);line-height:1.75;margin-bottom:14px;">
+        Em desastres de grande magnitude não há recursos para atuar em todas as frentes. Este sistema ajuda a <strong>priorizar ações</strong> e <strong>organizar recursos</strong> de forma racional e ágil.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <div style="width:28px;height:28px;background:var(--red-mid);color:var(--red);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;">1</div>
+          <div><div style="font-weight:700;font-size:13px;margin-bottom:2px;">Classifique com a Matriz GUT</div><div style="font-size:12px;color:var(--text-3);">Avalie gravidade, urgência e tendência de cada situação.</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <div style="width:28px;height:28px;background:#ffedd5;color:var(--orange);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;">2</div>
+          <div><div style="font-weight:700;font-size:13px;margin-bottom:2px;">Defina a prioridade</div><div style="font-size:12px;color:var(--text-3);">A matriz cruza o GUT com o tempo de resposta necessário.</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <div style="width:28px;height:28px;background:var(--blue-light);color:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;">3</div>
+          <div><div style="font-weight:700;font-size:13px;margin-bottom:2px;">Aloque recursos</div><div style="font-size:12px;color:var(--text-3);">Cadastre equipes e meios de transporte e atribua às ações.</div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-title">🗺️ Via de Acesso</div>
+        <div class="via-card terra">
+          <div class="via-card-icon">🚗</div>
+          <div><div class="via-card-title" style="color:var(--green);">Terrestre — Preferencial</div><div class="via-card-desc">Mais disponível e menor custo. Usar sempre que possível.</div></div>
+        </div>
+        <div class="via-card agua">
+          <div class="via-card-icon">🚤</div>
+          <div><div class="via-card-title" style="color:var(--cyan);">Aquático — Secundário</div><div class="via-card-desc">Quando o acesso terrestre não for possível.</div></div>
+        </div>
+        <div class="via-card ar">
+          <div class="via-card-icon">🚁</div>
+          <div><div class="via-card-title" style="color:var(--blue);">Aéreo — Último recurso</div><div class="via-card-desc">Custo elevado. Apenas quando terra e água não são viáveis.</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔴 Ações de Prioridade Máxima</div>
+        <div id="home-max-actions">
+          <div class="empty-state" style="padding:20px 10px;">
+            <div class="empty-state-icon">✅</div>
+            <div class="empty-state-text">Nenhuma ação de prioridade máxima</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ AÇÕES ══════════ -->
+<div id="screen-actions" class="screen">
+  <div class="page-header">
+    <div><div class="page-title">Ações em Andamento</div><div class="page-sub">Situações registradas com necessidade de atuação imediata ou programada</div></div>
+    <button class="btn btn-primary" onclick="openActionModal()">+ Nova Ação</button>
+  </div>
+  <div class="tab-row">
+    <button class="tab-btn active" onclick="filterActions('all',this)">Todas</button>
+    <button class="tab-btn" onclick="filterActions('max',this)">🔴 Máxima</button>
+    <button class="tab-btn" onclick="filterActions('very-high',this)">🟠 Muito Alta</button>
+    <button class="tab-btn" onclick="filterActions('high',this)">🟡 Alta</button>
+    <button class="tab-btn" onclick="filterActions('med-high',this)">🟢 Méd/Alta</button>
+    <button class="tab-btn" onclick="filterActions('med',this)">🔵 Média</button>
+    <button class="tab-btn" onclick="filterActions('low',this)">🟣 Baixa</button>
+  </div>
+  <div id="actions-list"></div>
+</div>
+
+<!-- ══════════ GUT RESGATE ══════════ -->
+<div id="screen-gut-resgate" class="screen">
+  <div class="page-header">
+    <div><div class="page-title">GUT — Socorro e Resgate</div><div class="page-sub">Classificação de prioridade para situações de resgate de pessoas</div></div>
+    <button class="btn btn-primary" onclick="saveGutAsAction('r')">💾 Salvar como Ação</button>
+  </div>
+  <!-- Topo: O Quê / Onde / Pontuação -->
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 300px;gap:14px;align-items:stretch;margin-bottom:22px;">
+    <div class="form-group" style="margin:0"><label>O quê (ocorrência)</label><input type="text" id="gut-r-what" placeholder="ex: Famílias isoladas em área inundada"></div>
+    <div class="form-group" style="margin:0"><label>Onde (localização)</label><input type="text" id="gut-r-where" placeholder="ex: Rua das Flores, 120 — Petrópolis"></div>
+    <div class="gut-result-box" style="margin:0;padding:16px 20px;background:linear-gradient(135deg,var(--surface2) 0%,var(--surface) 100%);border:2px solid var(--border2);min-width:0;flex-shrink:0;">
+      <div>
+        <div class="gut-result-label" style="font-size:9px;letter-spacing:1.5px;">PONTUAÇÃO GUT</div>
+        <div class="gut-result-score" id="gut-r-score" style="color:var(--text-3);font-size:52px;line-height:1;">—</div>
+        <div class="gut-result-label" style="font-size:9px;letter-spacing:1.5px;margin-top:2px;">MÁX: 5.00</div>
+      </div>
+      <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:6px;">
+        <div id="gut-r-class" style="font-size:16px;font-weight:800;"></div>
+        <div id="gut-r-priority-badge"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Critérios em largura total -->
+  <div class="gut-category-title gravity">📍 Gravidade</div>
+  <div id="gut-r-gravity-items"></div>
+  <div class="gut-category-title urgency" style="margin-top:20px;">⏱ Urgência</div>
+  <div id="gut-r-urgency-items"></div>
+  <div class="gut-category-title tendency" style="margin-top:20px;">📈 Tendência</div>
+  <div id="gut-r-tendency-items"></div>
+</div>
+
+<!-- ══════════ GUT GERAL ══════════ -->
+<div id="screen-gut-geral" class="screen">
+  <div class="page-header">
+    <div><div class="page-title">GUT — Ocorrências Gerais</div><div class="page-sub">Para infraestrutura, acessos, serviços essenciais e outros eventos</div></div>
+    <button class="btn btn-primary" onclick="saveGutAsAction('g')">💾 Salvar como Ação</button>
+  </div>
+  <!-- Topo: O Quê / Onde / Pontuação -->
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 300px;gap:14px;align-items:stretch;margin-bottom:22px;">
+    <div class="form-group" style="margin:0"><label>O quê (ocorrência)</label><input type="text" id="gut-g-what" placeholder="ex: Desabamento da Ponte da Rua X"></div>
+    <div class="form-group" style="margin:0"><label>Onde (localização)</label><input type="text" id="gut-g-where" placeholder="ex: Bairro Centro — Canoas"></div>
+    <div class="gut-result-box" style="margin:0;padding:16px 20px;background:linear-gradient(135deg,var(--surface2) 0%,var(--surface) 100%);border:2px solid var(--border2);min-width:0;flex-shrink:0;">
+      <div>
+        <div class="gut-result-label" style="font-size:9px;letter-spacing:1.5px;">PONTUAÇÃO GUT</div>
+        <div class="gut-result-score" id="gut-g-score" style="color:var(--text-3);font-size:52px;line-height:1;">—</div>
+        <div class="gut-result-label" style="font-size:9px;letter-spacing:1.5px;margin-top:2px;">MÁX: 5.00</div>
+      </div>
+      <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:6px;">
+        <div id="gut-g-class" style="font-size:16px;font-weight:800;"></div>
+        <div id="gut-g-priority-badge"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Critérios em largura total -->
+  <div class="gut-category-title gravity">📍 Gravidade</div>
+  <div id="gut-g-gravity-items"></div>
+  <div class="gut-category-title urgency" style="margin-top:20px;">⏱ Urgência</div>
+  <div id="gut-g-urgency-items"></div>
+  <div class="gut-category-title tendency" style="margin-top:20px;">📈 Tendência</div>
+  <div id="gut-g-tendency-items"></div>
+</div>
+
+<!-- ══════════ MATRIZ ══════════ -->
+<div id="screen-matrix" class="screen">
+  <div class="page-header">
+    <div><div class="page-title">Matriz de Risco / Prioridade</div><div class="page-sub">GUT (Gravidade / Urgência / Tendência) × Tempo de Resposta necessário</div></div>
+  </div>
+  <div class="card">
+    <div style="overflow-x:auto;">
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th style="text-align:left;min-width:160px;">GUT / Classificação</th>
+            <th>A<br><span style="font-weight:400;font-size:9px;">&lt; 1h</span></th>
+            <th>B<br><span style="font-weight:400;font-size:9px;">1 – 6h</span></th>
+            <th>C<br><span style="font-weight:400;font-size:9px;">6h – 1 dia</span></th>
+            <th>D<br><span style="font-weight:400;font-size:9px;">1 – 15 dias</span></th>
+            <th>E<br><span style="font-weight:400;font-size:9px;">&gt; 15 dias</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="row-label">5 · Catastrófica</td><td class="m-A">MÁXIMA<br><small>A</small></td><td class="m-B">MT ALTA<br><small>B</small></td><td class="m-D">MÉD/ALTA<br><small>D</small></td><td class="m-E">MÉDIA<br><small>E</small></td><td class="m-F">BAIXA<br><small>F</small></td></tr>
+          <tr><td class="row-label">4 · Crítica</td><td class="m-B">MT ALTA<br><small>B</small></td><td class="m-C">ALTA<br><small>C</small></td><td class="m-E">MÉDIA<br><small>E</small></td><td class="m-F">BAIXA<br><small>F</small></td><td class="m-N">Não é prioridade</td></tr>
+          <tr><td class="row-label">3 · Média</td><td class="m-D">MÉD/ALTA<br><small>D</small></td><td class="m-E">MÉDIA<br><small>E</small></td><td class="m-F">BAIXA<br><small>F</small></td><td class="m-N">Não é prioridade</td><td class="m-N">Não é prioridade</td></tr>
+          <tr><td class="row-label">2 · Marginal</td><td class="m-F">BAIXA<br><small>F</small></td><td class="m-N">Muito baixa</td><td class="m-N">Não é prioridade</td><td class="m-N">Não é prioridade</td><td class="m-N">Não realizar</td></tr>
+          <tr><td class="row-label">1 · Desprezível</td><td class="m-N">Muito baixa</td><td class="m-N">Não é prioridade</td><td class="m-N">Não é prioridade</td><td class="m-N">Não é prioridade</td><td class="m-N">Desnecessária</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:11px;color:var(--text-3);margin-top:10px;font-family:var(--font-mono);">Colunas de tempo: A = &lt;1h · B = 1–6h · C = 6h–1dia · D = 1–15 dias · E = &gt;15 dias</div>
+  </div>
+  <div class="card">
+    <div class="card-title">⚡ Exemplos por nível de prioridade</div>
+    <div class="section-label">Prioridade Máxima – A</div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;">
+      <span class="priority-badge max">Socorro e resgate — risco iminente</span>
+      <span class="priority-badge max">Atendimento de saúde gravíssimo</span>
+      <span class="priority-badge max">Fornecimento de água potável emergencial</span>
+    </div>
+    <div class="section-label">Prioridade Muito Alta – B</div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;">
+      <span class="priority-badge very-high">Energia para instalações essenciais</span>
+      <span class="priority-badge very-high">Alimentação emergencial em abrigo</span>
+    </div>
+    <div class="section-label">Prioridade Alta – C / Média/Alta – D</div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;">
+      <span class="priority-badge med-high">Montagem de pontilhão de acesso</span>
+      <span class="priority-badge med-high">Recuperação de estrada principal</span>
+      <span class="priority-badge high">Material de higiene para abrigados</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ HUMANOS ══════════ -->
+<div id="screen-human" class="screen">
+  <div class="page-header">
+    <div><div class="page-title">Recursos Humanos</div><div class="page-sub">Especialistas e voluntários cadastrados para atuação</div></div>
+    <button class="btn btn-primary" onclick="openModal('modal-human')">+ Cadastrar</button>
+  </div>
+  <div id="human-list"></div>
+</div>
+
+<!-- ══════════ TRANSPORTE ══════════ -->
+<div id="screen-transport" class="screen">
+  <div class="page-header">
+    <div><div class="page-title">Recursos de Transporte</div><div class="page-sub">Meios terrestres, aquáticos e aéreos disponíveis</div></div>
+  </div>
+  <div class="transport-grid">
+    <div class="transport-col">
+      <div class="transport-col-header terra" style="justify-content:space-between;">
+        <span>🚗 Terrestre</span>
+        <button class="btn btn-sm" onclick="openTransportModal('terrestre')"
+          style="background:rgba(22,163,74,0.12);border:1px solid rgba(22,163,74,0.3);color:var(--green);font-size:11px;padding:4px 10px;">+ Cadastrar</button>
+      </div>
+      <div id="transport-terra"></div>
+    </div>
+    <div class="transport-col">
+      <div class="transport-col-header agua" style="justify-content:space-between;">
+        <span>🚤 Aquático</span>
+        <button class="btn btn-sm" onclick="openTransportModal('aquático')"
+          style="background:rgba(8,145,178,0.12);border:1px solid rgba(8,145,178,0.3);color:var(--cyan);font-size:11px;padding:4px 10px;">+ Cadastrar</button>
+      </div>
+      <div id="transport-agua"></div>
+    </div>
+    <div class="transport-col">
+      <div class="transport-col-header ar" style="justify-content:space-between;">
+        <span>✈️ Aéreo</span>
+        <button class="btn btn-sm" onclick="openTransportModal('aéreo')"
+          style="background:rgba(37,99,235,0.12);border:1px solid rgba(37,99,235,0.3);color:var(--blue);font-size:11px;padding:4px 10px;">+ Cadastrar</button>
+      </div>
+      <div id="transport-ar"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ EQUIPAMENTOS ══════════ -->
+<div id="screen-equipment" class="screen">
+  <div class="page-header">
+    <div><div class="page-title">Equipamentos</div><div class="page-sub">Ferramentas e materiais especializados cadastrados</div></div>
+    <button class="btn btn-primary" onclick="openModal('modal-equip')">+ Cadastrar</button>
+  </div>
+  <div id="equip-list"></div>
+</div>
+
+</main>
+</div><!-- app-layout -->
+
+<!-- ══════════ MODALS ══════════ -->
+
+<!-- Modal Ação -->
+<div class="modal-overlay" id="modal-action">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-action-title">📋 Nova Ação</div>
+      <button class="modal-close" onclick="closeModal('modal-action')">✕</button>
+    </div>
+    <input type="hidden" id="a-editing-id" value="">
+    <div class="form-group"><label>O quê (descrição da ação)</label><input type="text" id="a-what" placeholder="ex: Resgatar pessoas isoladas na Rua X"></div>
+    <div class="form-group"><label>Onde (localização)</label><input type="text" id="a-where" placeholder="ex: Rua das Flores, 120 — Bairro Alto"></div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Nível de Prioridade</label>
+        <select id="a-priority">
+          <option value="max">🔴 Prioridade Máxima – A</option>
+          <option value="very-high">🟠 Prioridade Muito Alta – B</option>
+          <option value="high">🟡 Prioridade Alta – C</option>
+          <option value="med-high">🟢 Prioridade Média/Alta – D</option>
+          <option value="med">🔵 Prioridade Média – E</option>
+          <option value="low">🟣 Prioridade Baixa – F</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Via de Acesso</label>
+        <select id="a-via">
+          <option value="terrestre">🚗 Terrestre</option>
+          <option value="aquático">🚤 Aquático</option>
+          <option value="aéreo">✈️ Aéreo</option>
+          <option value="combinado">🔀 Combinado</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Quando</label>
+      <input type="datetime-local" id="a-when" onchange="onActionDateChange()">
+      <div id="a-when-hint" style="font-size:11px;color:var(--text-3);margin-top:4px;display:none;">
+        📅 Os recursos abaixo serão filtrados para mostrar apenas os disponíveis nesta data.
+      </div>
+    </div>
+
+    <!-- QUEM: seletor de humanos cadastrados -->
+    <div class="form-group">
+      <label>Quem / Responsável — Recursos Humanos</label>
+      <div class="resource-selector" id="rs-who">
+        <div class="rs-display" id="rs-who-display" onclick="toggleRS('who')">
+          <span class="rs-placeholder" id="rs-who-placeholder">Selecionar recursos humanos...</span>
+          <span class="rs-arrow">▾</span>
+        </div>
+        <div class="rs-dropdown" id="rs-who-dropdown">
+          <div class="rs-search-wrap"><input type="text" class="rs-search" placeholder="Buscar por nome ou especialidade..." oninput="filterRS('who',this.value)"></div>
+          <div class="rs-list" id="rs-who-list"></div>
+          <div class="rs-footer">
+            <span class="rs-hint">Selecione um ou mais · clique para marcar/desmarcar</span>
+            <button class="btn btn-primary btn-sm" onclick="confirmRS('who')">✓ Confirmar</button>
+          </div>
+        </div>
+      </div>
+      <div class="rs-tags" id="rs-who-tags"></div>
+    </div>
+
+    <!-- COMO — dividido em Transporte e Equipamentos -->
+    <div class="section-label" style="margin:4px 0 12px;">Como será realizada a ação</div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>🚗 Transporte utilizado</label>
+        <div class="resource-selector" id="rs-transport">
+          <div class="rs-display" id="rs-transport-display" onclick="toggleRS('transport')">
+            <span class="rs-placeholder" id="rs-transport-placeholder">Selecionar transporte...</span>
+            <span class="rs-arrow">▾</span>
+          </div>
+          <div class="rs-dropdown" id="rs-transport-dropdown">
+            <div class="rs-search-wrap"><input type="text" class="rs-search" placeholder="Buscar tipo ou instituição..." oninput="filterRS('transport',this.value)"></div>
+            <div class="rs-list" id="rs-transport-list"></div>
+            <div class="rs-footer">
+              <span class="rs-hint">Selecione um ou mais</span>
+              <button class="btn btn-primary btn-sm" onclick="confirmRS('transport')">✓ Confirmar</button>
+            </div>
+          </div>
+        </div>
+        <div class="rs-tags" id="rs-transport-tags"></div>
+      </div>
+      <div class="form-group">
+        <label>🔧 Equipamentos utilizados</label>
+        <div class="resource-selector" id="rs-equip">
+          <div class="rs-display" id="rs-equip-display" onclick="toggleRS('equip')">
+            <span class="rs-placeholder" id="rs-equip-placeholder">Selecionar equipamentos...</span>
+            <span class="rs-arrow">▾</span>
+          </div>
+          <div class="rs-dropdown" id="rs-equip-dropdown">
+            <div class="rs-search-wrap"><input type="text" class="rs-search" placeholder="Buscar equipamento..." oninput="filterRS('equip',this.value)"></div>
+            <div class="rs-list" id="rs-equip-list"></div>
+            <div class="rs-footer">
+              <span class="rs-hint">Selecione um ou mais</span>
+              <button class="btn btn-primary btn-sm" onclick="confirmRS('equip')">✓ Confirmar</button>
+            </div>
+          </div>
+        </div>
+        <div class="rs-tags" id="rs-equip-tags"></div>
+      </div>
+    </div>
+
+    <div class="form-group"><label>Por quê (justificativa)</label><input type="text" id="a-why" placeholder="ex: Famílias em risco iminente de afogamento"></div>
+    <div class="form-group"><label>Comentários de especialistas</label><textarea id="a-comments" rows="2" placeholder="Observações de geólogo, hidrólogo, meteorologista, gestor..."></textarea></div>
+    <div class="form-group"><label>Resultado / Mais informações</label><input type="text" id="a-info" placeholder="ex: Famílias levadas ao abrigo xyz, todos em segurança"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+      <button class="btn btn-ghost" onclick="closeModal('modal-action')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-save-action" onclick="saveAction()">💾 Salvar Ação</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Recurso Humano -->
+<div class="modal-overlay" id="modal-human">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-human-title">👤 Recurso Humano</div>
+      <button class="modal-close" onclick="closeModal('modal-human')">✕</button>
+    </div>
+    <input type="hidden" id="h-editing-id" value="">
+    <div class="form-group">
+      <label>Especialidade</label>
+      <select id="h-specialty">
+        <option value="">Selecione a especialidade...</option>
+        <option>Socorro e resgate em campo — médico(a)</option>
+        <option>Socorro e resgate em campo — enfermeiro(a)</option>
+        <option>Socorro e resgate em campo — socorrista</option>
+        <option>Avaliação estrutural — engenheiro civil</option>
+        <option>Avaliação estrutural — técnico em edificações</option>
+        <option>Avaliação de taludes — geólogo</option>
+        <option>Avaliação de taludes — engenheiro</option>
+        <option>Mapeamento de áreas — geógrafo</option>
+        <option>Avaliação situacional — especialista/gestor</option>
+        <option>Atendimento às vítimas — psicólogo(a)</option>
+        <option>Atendimento às vítimas — assistente social</option>
+        <option>Atendimento às vítimas — voluntário</option>
+        <option>Mão de obra — carregar mantimentos</option>
+        <option>Motorista de veículos 4x4</option>
+        <option>Motorista de ônibus / caminhão</option>
+        <option>Piloto de jet ski</option>
+        <option>Piloto de lancha</option>
+        <option>Alimentação — nutricionista</option>
+        <option>Alimentação — cozinheiro(a)</option>
+        <option>Alimentação — auxiliar de cozinha</option>
+        <option>Organização de donativos — especialista</option>
+        <option>Organização de abrigos — especialista</option>
+        <option>Organização de abrigos — psicólogo/pedagogo</option>
+        <option>Outro</option>
+      </select>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label>Nome completo</label><input type="text" id="h-name" placeholder="Nome da pessoa"></div>
+      <div class="form-group"><label>Idade</label><input type="number" id="h-age" min="16" max="99" placeholder="ex: 38"></div>
+    </div>
+    <div class="form-group">
+      <label>Disponibilidade (período)</label>
+      <div class="date-range-wrapper" id="drw-h">
+        <div class="date-range-display" id="drd-h" onclick="toggleDatePicker('h')">
+          <span class="icon">📅</span>
+          <span class="value" id="drv-h"><span class="placeholder">Selecionar período de disponibilidade</span></span>
+        </div>
+        <div class="date-picker-popup" id="dpp-h">
+          <div class="date-picker-header">
+            <div class="date-picker-title">Período de disponibilidade</div>
+            <button class="btn btn-ghost btn-sm" onclick="clearDatePicker('h')">Limpar</button>
+          </div>
+          <div class="date-picker-grid">
+            <div class="date-picker-col"><label>Data de início</label><input type="date" class="date-picker-input" id="dp-h-start" onchange="updateDateRange('h')"></div>
+            <div class="date-picker-col"><label>Data de término</label><input type="date" class="date-picker-input" id="dp-h-end" onchange="updateDateRange('h')"></div>
+          </div>
+          <div class="date-picker-summary" id="dps-h"></div>
+          <div class="date-picker-actions">
+            <button class="btn btn-ghost btn-sm" onclick="closeDatePicker('h')">Fechar</button>
+            <button class="btn btn-primary btn-sm" onclick="confirmDatePicker('h')">✓ Confirmar</button>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" id="h-avail-start">
+      <input type="hidden" id="h-avail-end">
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label>Contato (telefone/WhatsApp)</label><input type="text" id="h-contact" placeholder="ex: (21) 99999-0000"></div>
+      <div class="form-group"><label>Instituição / Origem</label><input type="text" id="h-org" placeholder="ex: CBMERJ, Cruz Vermelha"></div>
+    </div>
+    <div class="form-group"><label>Recurso próprio (transporte / equipamento)</label><input type="text" id="h-resource" placeholder="ex: Veículo 4x4, trena a laser"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+      <button class="btn btn-ghost" onclick="closeModal('modal-human')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-save-human" onclick="saveHuman()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Transporte -->
+<div class="modal-overlay" id="modal-transport">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-transport-title">🚗 Recurso de Transporte</div>
+      <button class="modal-close" onclick="closeModal('modal-transport')">✕</button>
+    </div>
+    <input type="hidden" id="t-editing-id" value="">
+    <div class="form-group" id="t-via-group">
+      <label>Via de transporte</label>
+      <!-- select normal (visível apenas em edição livre) -->
+      <select id="t-via">
+        <option value="terrestre">🚗 Terrestre</option>
+        <option value="aquático">🚤 Aquático</option>
+        <option value="aéreo">✈️ Aéreo</option>
+      </select>
+      <!-- badge fixo (visível quando via está pré-selecionada pelo botão) -->
+      <div id="t-via-fixed" style="display:none;align-items:center;gap:8px;padding:9px 13px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--radius-sm);">
+        <span id="t-via-fixed-icon" style="font-size:16px;"></span>
+        <span id="t-via-fixed-label" style="font-weight:700;font-size:13.5px;"></span>
+        <span style="font-size:11px;color:var(--text-3);margin-left:4px;">(definido automaticamente)</span>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label>Tipo / Descrição</label><input type="text" id="t-type" placeholder="ex: Veículo 4x4, Bote inflável, Helicóptero"></div>
+      <div class="form-group"><label>Quantidade</label><input type="number" id="t-qty" min="1" placeholder="ex: 10"></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label>Instituição / Origem</label><input type="text" id="t-org" placeholder="ex: PM São Paulo, Defesa Civil"></div>
+      <div class="form-group"><label>Local atual / Base</label><input type="text" id="t-loc" placeholder="ex: Defesa Civil de Canoas"></div>
+    </div>
+    <div class="form-group">
+      <label>Disponibilidade (período)</label>
+      <div class="date-range-wrapper" id="drw-t">
+        <div class="date-range-display" id="drd-t" onclick="toggleDatePicker('t')">
+          <span class="icon">📅</span>
+          <span class="value" id="drv-t"><span class="placeholder">Selecionar período de disponibilidade</span></span>
+        </div>
+        <div class="date-picker-popup" id="dpp-t">
+          <div class="date-picker-header">
+            <div class="date-picker-title">Período de disponibilidade</div>
+            <button class="btn btn-ghost btn-sm" onclick="clearDatePicker('t')">Limpar</button>
+          </div>
+          <div class="date-picker-grid">
+            <div class="date-picker-col"><label>Data de início</label><input type="date" class="date-picker-input" id="dp-t-start" onchange="updateDateRange('t')"></div>
+            <div class="date-picker-col"><label>Data de término</label><input type="date" class="date-picker-input" id="dp-t-end" onchange="updateDateRange('t')"></div>
+          </div>
+          <div class="date-picker-summary" id="dps-t"></div>
+          <div class="date-picker-actions">
+            <button class="btn btn-ghost btn-sm" onclick="closeDatePicker('t')">Fechar</button>
+            <button class="btn btn-primary btn-sm" onclick="confirmDatePicker('t')">✓ Confirmar</button>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" id="t-avail-start">
+      <input type="hidden" id="t-avail-end">
+    </div>
+    <div class="form-group"><label>Acompanha (tripulação / equipamento)</label><input type="text" id="t-crew" placeholder="ex: Com pilotos habilitados, com corda para resgate"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+      <button class="btn btn-ghost" onclick="closeModal('modal-transport')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-save-transport" onclick="saveTransport()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Equipamento -->
+<div class="modal-overlay" id="modal-equip">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-equip-title">🔧 Equipamento</div>
+      <button class="modal-close" onclick="closeModal('modal-equip')">✕</button>
+    </div>
+    <input type="hidden" id="e-editing-id" value="">
+    <div class="form-group"><label>Descrição do equipamento</label><input type="text" id="e-desc" placeholder="ex: Maca para resgate, Trena a laser, Notebook"></div>
+    <div class="form-group"><label>Detalhes / Especificações</label><input type="text" id="e-details" placeholder="ex: 20 metros, capacidade 150kg"></div>
+    <div class="grid-2">
+      <div class="form-group"><label>Quantidade</label><input type="number" id="e-qty" min="1" placeholder="ex: 5"></div>
+      <div class="form-group"><label>Instituição / Origem</label><input type="text" id="e-org" placeholder="ex: Cruz Vermelha"></div>
+    </div>
+    <div class="form-group">
+      <label>Disponibilidade (período)</label>
+      <div class="date-range-wrapper" id="drw-e">
+        <div class="date-range-display" id="drd-e" onclick="toggleDatePicker('e')">
+          <span class="icon">📅</span>
+          <span class="value" id="drv-e"><span class="placeholder">Selecionar período de disponibilidade</span></span>
+        </div>
+        <div class="date-picker-popup" id="dpp-e">
+          <div class="date-picker-header">
+            <div class="date-picker-title">Período de disponibilidade</div>
+            <button class="btn btn-ghost btn-sm" onclick="clearDatePicker('e')">Limpar</button>
+          </div>
+          <div class="date-picker-grid">
+            <div class="date-picker-col"><label>Data de início</label><input type="date" class="date-picker-input" id="dp-e-start" onchange="updateDateRange('e')"></div>
+            <div class="date-picker-col"><label>Data de término</label><input type="date" class="date-picker-input" id="dp-e-end" onchange="updateDateRange('e')"></div>
+          </div>
+          <div class="date-picker-summary" id="dps-e"></div>
+          <div class="date-picker-actions">
+            <button class="btn btn-ghost btn-sm" onclick="closeDatePicker('e')">Fechar</button>
+            <button class="btn btn-primary btn-sm" onclick="confirmDatePicker('e')">✓ Confirmar</button>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" id="e-avail-start">
+      <input type="hidden" id="e-avail-end">
+    </div>
+    <div class="form-group"><label>Local atual</label><input type="text" id="e-loc" placeholder="ex: Defesa Civil Estadual RS"></div>
+    <div class="form-group"><label>Acompanha (recurso humano / transporte)</label><input type="text" id="e-crew" placeholder="ex: 20 socorristas, veículos 4x4"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+      <button class="btn btn-ghost" onclick="closeModal('modal-equip')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-save-equip" onclick="saveEquip()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Mapa -->
+<div class="modal-overlay" id="modal-map">
+  <div class="modal" style="width:740px;max-width:96vw;">
+    <div class="modal-header">
+      <div class="modal-title">📍 Marcar Área no Mapa</div>
+      <button class="modal-close" onclick="closeModal('modal-map')">✕</button>
+    </div>
+    <div style="font-size:12.5px;color:var(--text-3);margin-bottom:12px;">
+      Clique no mapa para marcar o ponto central da área afetada. Use a busca para navegar até a localização.
+    </div>
+    <!-- Busca de endereço -->
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <input type="text" id="map-search-input" placeholder="Buscar cidade, bairro ou endereço..." style="flex:1;"
+        onkeydown="if(event.key==='Enter') searchMapAddress()">
+      <button class="btn btn-primary btn-sm" onclick="searchMapAddress()">🔍 Buscar</button>
+    </div>
+    <!-- Mapa -->
+    <div id="map-container" style="width:100%;height:380px;border-radius:var(--radius-sm);overflow:hidden;border:1.5px solid var(--border);position:relative;background:#e8eaed;">
+      <div id="map-inner" style="width:100%;height:100%;"></div>
+      <div id="map-loading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:13px;color:var(--text-3);">
+        Carregando mapa...
+      </div>
+    </div>
+    <!-- Coordenadas selecionadas -->
+    <div id="map-selected" style="margin-top:10px;padding:10px 14px;background:var(--blue-light);border:1px solid #bfdbfe;border-radius:var(--radius-sm);font-size:12.5px;color:var(--blue);font-weight:600;display:none;">
+      📍 <span id="map-selected-label">—</span>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
+      <button class="btn btn-ghost" onclick="closeModal('modal-map')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmMapPin()" id="btn-confirm-map" disabled style="opacity:0.5;">✓ Confirmar Localização</button>
+    </div>
+  </div>
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+// ══════ STATE ══════
+const state = { incident:{}, actions:[], humans:[], transports:[], equips:[], gutR:{}, gutG:{} };
+
+// ══════ GUT DATA ══════
+const gutRescue = [
+  {cat:'gravity',label:'Tipo de Local',weight:1,opts:['Edificação boa estrutura e intacta','Edificação residencial comum','Isolado em estrutura encontrada','Veículo em área com inundação','Isolado no meio do sinistro (ex: árvore)']},
+  {cat:'gravity',label:'Tipo de Sinistro',weight:1,opts:['Sem sinistro na edificação','Alagamento até 1m','Alagamento acima de 2m','Deslizamento (sem desabamento)','Desabamento estrutural']},
+  {cat:'gravity',label:'Localização',weight:1,opts:['Muita estrutura próxima','Próximo a abrigos e apoio','Distante de abrigos/apoio','Distante de qualquer apoio','Muito distante de qualquer apoio']},
+  {cat:'gravity',label:'Quantidade de Pessoas',weight:1,opts:['1 família','Algumas famílias','Dezenas de pessoas','Centenas de pessoas','Milhares de pessoas']},
+  {cat:'urgency',label:'Risco de Vida',weight:2,opts:['Sem qualquer risco','Alguns feridos leves','Pessoas doentes','Feridos/doentes graves','Risco iminente (ex: falta de oxigênio)']},
+  {cat:'urgency',label:'Mobilidade / Situação Pessoal',weight:1,opts:['Homens jovens e saudáveis','Adultos em boa saúde','Pessoas com necessidades especiais','Criança com problemas de saúde','Grávida / recém-nascido']},
+  {cat:'urgency',label:'Acesso a Água / Alimento',weight:1,opts:['Tem água e comida','Tem água, pouca comida','Sem acesso a comida','Sem acesso a água ou comida','Sem água há mais de 24h']},
+  {cat:'urgency',label:'Energia e/ou Comunicação',weight:1,opts:['Tem energia e comunicação','Energia e comunicação oscilante','Sem energia, tem comunicação','Sem energia, comunicação oscilante','Sem energia ou comunicação']},
+  {cat:'tendency',label:'Acesso ao Local',weight:1,opts:['Chega de carro','Chega com veículo 4x4','Só chega de barco','Só chega de helicóptero','Só helicóptero de maior porte']},
+  {cat:'tendency',label:'Condição de Segurança',weight:1,opts:['Vai melhorar','Deve melhorar','Pode piorar','Tendência de piorar','Tendência de piora grave']},
+];
+const gutGeral = [
+  {cat:'gravity',label:'Integridade Estrutural',weight:1,opts:['Sem dano estrutural','Leve dano estrutural','Dano estrutural significativo','Grave dano estrutural','Colapso estrutural']},
+  {cat:'gravity',label:'Qtd de Pessoas Afetadas',weight:1,opts:['Nenhuma pessoa afetada','Poucas pessoas','Dezenas de pessoas','Milhares de pessoas','Mais de 100 mil pessoas']},
+  {cat:'gravity',label:'Condição de Uso',weight:1,opts:['Uso normal','Uso levemente comprometido','Uso comprometido','Uso muito restrito','Sem condições de uso']},
+  {cat:'urgency',label:'Risco das Pessoas Afetadas',weight:1,opts:['Sem qualquer risco','Baixo risco','Médio risco','Alto risco','Muito alto risco']},
+  {cat:'urgency',label:'Impacto na Logística / Cidade',weight:1,opts:['Muito baixo impacto','Baixo impacto','Médio impacto','Alto impacto','Muito alto impacto']},
+  {cat:'tendency',label:'Acesso / Resolução',weight:1,opts:['Muito difícil resolver','Chega com 4x4 grande','Média dificuldade','Razoavelmente fácil','Muito fácil resolver']},
+  {cat:'tendency',label:'Condição de Segurança',weight:1,opts:['Vai melhorar','Deve melhorar','Pode piorar','Tendência de piorar','Tendência de piora grave']},
+];
+
+// ══════ NAVIGATION ══════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  const btn = [...document.querySelectorAll('.nav-btn')].find(b=>b.getAttribute('onclick')===`showScreen('${id}')`);
+  if(btn) btn.classList.add('active');
+}
+
+// ══════ MODALS ══════
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); });
+});
+
+// ══════ DATE PICKER ══════
+const dpState = {};
+function toggleDatePicker(key){
+  const popup = document.getElementById('dpp-'+key);
+  const display = document.getElementById('drd-'+key);
+  const isOpen = popup.classList.contains('open');
+  // close all
+  document.querySelectorAll('.date-picker-popup').forEach(p=>p.classList.remove('open'));
+  document.querySelectorAll('.date-range-display').forEach(d=>d.classList.remove('active'));
+  if(!isOpen){ popup.classList.add('open'); display.classList.add('active'); }
+}
+function closeDatePicker(key){
+  document.getElementById('dpp-'+key).classList.remove('open');
+  document.getElementById('drd-'+key).classList.remove('active');
+}
+function clearDatePicker(key){
+  document.getElementById('dp-'+key+'-start').value = '';
+  document.getElementById('dp-'+key+'-end').value = '';
+  document.getElementById('dps-'+key).classList.remove('visible');
+  document.getElementById('dps-'+key).textContent = '';
+  document.getElementById(key+'-avail-start').value = '';
+  document.getElementById(key+'-avail-end').value = '';
+  document.getElementById('drv-'+key).innerHTML = '<span class="placeholder">Selecionar período de disponibilidade</span>';
+  dpState[key] = null;
+}
+function formatDateBR(str){
+  if(!str) return '';
+  const [y,m,d] = str.split('-');
+  return `${d}/${m}/${y}`;
+}
+function daysBetween(s,e){
+  const a = new Date(s), b = new Date(e);
+  return Math.round((b-a)/(1000*60*60*24));
+}
+function updateDateRange(key){
+  const start = document.getElementById('dp-'+key+'-start').value;
+  const end   = document.getElementById('dp-'+key+'-end').value;
+  const sumEl = document.getElementById('dps-'+key);
+  if(start && end){
+    if(new Date(end) < new Date(start)){
+      sumEl.textContent = '⚠️ A data de término deve ser após a de início.';
+      sumEl.style.background='#fee2e2'; sumEl.style.borderColor='#fca5a5'; sumEl.style.color='var(--red)';
+      sumEl.classList.add('visible'); return;
+    }
+    const days = daysBetween(start,end);
+    sumEl.style.background=''; sumEl.style.borderColor=''; sumEl.style.color='';
+    sumEl.innerHTML = `📅 ${formatDateBR(start)} → ${formatDateBR(end)} &nbsp;·&nbsp; <strong>${days} dia${days!==1?'s':''}</strong>`;
+    sumEl.classList.add('visible');
+  } else { sumEl.classList.remove('visible'); }
+}
+function confirmDatePicker(key){
+  const start = document.getElementById('dp-'+key+'-start').value;
+  const end   = document.getElementById('dp-'+key+'-end').value;
+  if(!start){ showNotif('⚠️ Selecione pelo menos a data de início'); return; }
+  if(end && new Date(end) < new Date(start)){ showNotif('⚠️ Data de término inválida'); return; }
+  document.getElementById(key+'-avail-start').value = start;
+  document.getElementById(key+'-avail-end').value = end;
+  const label = end
+    ? `📅 ${formatDateBR(start)} → ${formatDateBR(end)} (${daysBetween(start,end)} dias)`
+    : `📅 A partir de ${formatDateBR(start)}`;
+  document.getElementById('drv-'+key).innerHTML = `<strong>${label}</strong>`;
+  dpState[key] = {start, end};
+  closeDatePicker(key);
+}
+function getAvailStr(key){
+  const s = document.getElementById(key+'-avail-start').value;
+  const e = document.getElementById(key+'-avail-end').value;
+  if(!s) return '';
+  if(e) return `${formatDateBR(s)} → ${formatDateBR(e)} (${daysBetween(s,e)} dias)`;
+  return `A partir de ${formatDateBR(s)}`;
+}
+function resetDatePicker(key){
+  clearDatePicker(key);
+}
+// close date picker when clicking outside
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.date-range-wrapper')){
+    document.querySelectorAll('.date-picker-popup').forEach(p=>p.classList.remove('open'));
+    document.querySelectorAll('.date-range-display').forEach(d=>d.classList.remove('active'));
+  }
+});
+
+// ══════ NOTIFICATIONS ══════
+function showNotif(msg){
+  const n=document.getElementById('notif');
+  n.textContent=msg; n.classList.add('show');
+  setTimeout(()=>n.classList.remove('show'),2800);
+}
+
+// ══════ INCIDENT ══════
+function setIncident(){
+  const name=document.getElementById('incident-name').value.trim();
+  if(!name){ showNotif('⚠️ Informe o nome do incidente'); return; }
+  const area=document.getElementById('incident-area').value.trim();
+  state.incident={name,area};
+  document.getElementById('header-incident').textContent=name+(area?' · '+area:'');
+  showNotif('✅ Incidente ativado: '+name);
+}
+
+// ══════ PRIORITY HELPERS ══════
+const P_LABELS={
+  'max':'Prioridade Máxima – A','very-high':'Prioridade Muito Alta – B',
+  'high':'Prioridade Alta – C','med-high':'Prioridade Média/Alta – D',
+  'med':'Prioridade Média – E','low':'Prioridade Baixa – F',
+  'very-low':'Prioridade Muito Baixa'
+};
+function pBadge(p){ return `<span class="priority-badge ${p}">${P_LABELS[p]||p}</span>`; }
+
+// ══════ GUT ══════
+function buildGutUI(items, prefix, stateKey){
+  const cats=['gravity','urgency','tendency'];
+  cats.forEach(cat=>{
+    const cont=document.getElementById(`gut-${prefix}-${cat}-items`);
+    if(!cont) return;
+    cont.innerHTML='';
+    items.forEach((item, globalIdx)=>{
+      if(item.cat !== cat) return;
+      const k = 'item_' + globalIdx;
+      // peso inicial = item.weight (do array de dados)
+      const initWeight = item.weight || 1;
+      const div=document.createElement('div');
+      div.className='gut-item';
+      div.innerHTML=`
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div class="gut-item-label">${item.label}</div>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <span style="font-size:9px;color:var(--text-4);font-family:var(--font-mono);letter-spacing:0.5px;text-transform:uppercase;">Peso</span>
+            <select class="gut-weight-select" id="${prefix}-${k}-weight"
+              style="width:44px;padding:2px 2px 2px 5px;font-size:11px;border:1px solid var(--border);border-radius:4px;background:var(--surface2);color:var(--text-3);font-family:var(--font-body);cursor:pointer;appearance:auto;-webkit-appearance:auto;"
+              onchange="onWeightChange('${prefix}','${k}','${stateKey}',${globalIdx})">
+              <option value="1" ${initWeight===1?'selected':''}>1</option>
+              <option value="2" ${initWeight===2?'selected':''}>2</option>
+              <option value="3" ${initWeight===3?'selected':''}>3</option>
+            </select>
+          </div>
+        </div>
+        <div class="gut-options-row" id="${prefix}-${k}-opts"></div>
+        <div class="gut-score" id="${prefix}-${k}-score">—</div>
+      `;
+      cont.appendChild(div);
+      const optsDiv=document.getElementById(`${prefix}-${k}-opts`);
+      item.opts.forEach((opt,vi)=>{
+        const score=vi+1;
+        const el=document.createElement('div');
+        el.className='gut-opt';
+        el.title=opt;
+        el.innerHTML=`<div style="font-size:12px;font-weight:700;">${score}</div><div style="font-size:9px;margin-top:2px;line-height:1.2;">${opt}</div>`;
+        el.onclick=()=>{
+          optsDiv.querySelectorAll('.gut-opt').forEach(o=>o.classList.remove('selected','s1','s2','s3','s4','s5'));
+          el.classList.add('selected','s'+score);
+          const w = parseInt(document.getElementById(`${prefix}-${k}-weight`).value)||1;
+          state[stateKey][k]={score, weight:w};
+          updateGutItemScore(prefix, k, score, w);
+          calcGut(prefix,stateKey,items);
+        };
+        optsDiv.appendChild(el);
+      });
+    });
+  });
+}
+
+function onWeightChange(prefix, k, stateKey, globalIdx){
+  const w = parseInt(document.getElementById(`${prefix}-${k}-weight`).value)||1;
+  // se já tem uma opção selecionada, atualiza o peso no state e recalcula
+  if(state[stateKey][k]){
+    state[stateKey][k].weight = w;
+    updateGutItemScore(prefix, k, state[stateKey][k].score, w);
+    // recalcula com o array correto
+    const items = (stateKey==='gutR') ? gutRescue : gutGeral;
+    calcGut(prefix, stateKey, items);
+  }
+}
+
+function updateGutItemScore(prefix, k, score, weight){
+  const sc = document.getElementById(`${prefix}-${k}-score`);
+  if(!sc) return;
+  // mostra pontuação bruta (score × peso) apenas para referência visual
+  sc.textContent = score * weight;
+  sc.style.color = score>=4?'var(--red)':score===3?'var(--orange)':'var(--text-3)';
+}
+
+function calcGut(prefix,stateKey,items){
+  const sel=state[stateKey];
+  // Fórmula: média ponderada normalizada para máximo 5
+  // pontuação = Σ(score_i × peso_i) / Σ(peso_i × 5) × 5
+  // = Σ(score_i × peso_i) / Σ(peso_i)
+  // = média ponderada dos scores (cada score já é 1-5)
+  // → máximo sempre 5, mínimo sempre 1 ✓
+  let sumWeightedScores = 0, sumWeights = 0;
+  items.forEach((item, globalIdx)=>{
+    const k = 'item_' + globalIdx;
+    // peso atual pode ter sido alterado pelo select; usar o do state se já foi clicado
+    const currentWeight = sel[k]
+      ? sel[k].weight
+      : (parseInt(document.getElementById(`${prefix}-${k}-weight`)?.value)||item.weight||1);
+    if(sel[k]){
+      sumWeightedScores += sel[k].score * currentWeight;
+      sumWeights += currentWeight;
+    }
+  });
+  if(sumWeights===0) return;
+  // média ponderada → sempre entre 1 e 5
+  const avg = sumWeightedScores / sumWeights;
+  const scoreEl=document.getElementById(`gut-${prefix}-score`);
+  const classEl=document.getElementById(`gut-${prefix}-class`);
+  const badgeEl=document.getElementById(`gut-${prefix}-priority-badge`);
+  if(scoreEl) scoreEl.textContent=avg.toFixed(2);
+  let level,color,pp;
+  if(avg>=4.5){level='CATASTRÓFICA';color='var(--red)';pp='max';}
+  else if(avg>=3.5){level='CRÍTICA';color='var(--orange)';pp='very-high';}
+  else if(avg>=2.5){level='MÉDIA';color='var(--yellow)';pp='high';}
+  else if(avg>=1.5){level='MARGINAL';color='var(--cyan)';pp='med';}
+  else{level='DESPREZÍVEL';color='var(--text-3)';pp='low';}
+  if(scoreEl) scoreEl.style.color=color;
+  if(classEl){classEl.style.color=color;classEl.textContent=level;}
+  if(badgeEl) badgeEl.innerHTML=`<div style="font-size:10px;color:var(--text-3);margin-bottom:5px;font-weight:600;letter-spacing:0.5px;">SUGESTÃO DE PRIORIDADE</div>${pBadge(pp)}`;
+}
+
+// ══════ ACTIONS ══════
+let actionFilter='all';
+
+// seleções atuais do modal de ação
+const rsSelected = { who: new Set(), transport: new Set(), equip: new Set() };
+
+function saveAction(prefill){
+  const editingId = prefill ? null : parseInt(document.getElementById('a-editing-id').value)||null;
+  const d = prefill || {
+    what:document.getElementById('a-what').value.trim(),
+    where:document.getElementById('a-where').value.trim(),
+    priority:document.getElementById('a-priority').value,
+    via:document.getElementById('a-via').value,
+    when:document.getElementById('a-when').value,
+    who: [...rsSelected.who].map(id=>{
+      const h=state.humans.find(x=>x.id===id);
+      return h ? `${h.name} (${h.specialty})` : '';
+    }).filter(Boolean).join(', '),
+    transport: [...rsSelected.transport].map(id=>{
+      const t=state.transports.find(x=>x.id===id);
+      return t ? `${t.type}×${t.qty||1} — ${t.org||''}` : '';
+    }).filter(Boolean).join(', '),
+    equip: [...rsSelected.equip].map(id=>{
+      const e=state.equips.find(x=>x.id===id);
+      return e ? `${e.desc}${e.qty?'×'+e.qty:''}` : '';
+    }).filter(Boolean).join(', '),
+    why:document.getElementById('a-why').value.trim(),
+    comments:document.getElementById('a-comments').value.trim(),
+    info:document.getElementById('a-info').value.trim(),
+  };
+  if(!d.what){showNotif('⚠️ Informe a descrição da ação');return;}
+  if(editingId){
+    const idx = state.actions.findIndex(a=>a.id===editingId);
+    if(idx>-1){ d.id=editingId; state.actions[idx]=d; }
+    showNotif('✅ Ação atualizada!');
+  } else {
+    d.id = prefill ? (d.id || Date.now()) : Date.now();
+    state.actions.push(d);
+    showNotif('✅ Ação salva!');
+  }
+  renderActions(); updateBadges(); updateStats();
+  if(!prefill){
+    closeModal('modal-action');
+    document.getElementById('a-editing-id').value='';
+    document.getElementById('modal-action-title').textContent='📋 Nova Ação';
+    document.getElementById('btn-save-action').textContent='💾 Salvar Ação';
+    ['a-what','a-where','a-when','a-why','a-comments','a-info'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    document.getElementById('a-priority').value='max';
+    document.getElementById('a-via').value='terrestre';
+    rsSelected.who.clear(); rsSelected.transport.clear(); rsSelected.equip.clear();
+    renderRSTags('who'); renderRSTags('transport'); renderRSTags('equip');
+    updateRSDisplay('who'); updateRSDisplay('transport'); updateRSDisplay('equip');
+  }
+}
+function editAction(id){
+  const a = state.actions.find(x=>x.id===id);
+  if(!a) return;
+  openActionModal();
+  setTimeout(()=>{
+    document.getElementById('modal-action-title').textContent='✏️ Editar Ação';
+    document.getElementById('btn-save-action').textContent='💾 Salvar Alterações';
+    document.getElementById('a-editing-id').value=id;
+    document.getElementById('a-what').value=a.what||'';
+    document.getElementById('a-where').value=a.where||'';
+    document.getElementById('a-priority').value=a.priority||'max';
+    document.getElementById('a-via').value=a.via||'terrestre';
+    document.getElementById('a-when').value=a.when||'';
+    document.getElementById('a-why').value=a.why||'';
+    document.getElementById('a-comments').value=a.comments||'';
+    document.getElementById('a-info').value=a.info||'';
+    // Mostrar os textos salvos como tags livres (não há IDs para re-selecionar)
+    if(a.who){
+      const el=document.getElementById('rs-who-placeholder');
+      if(el) el.innerHTML=`<span style="color:var(--text-2);font-size:12.5px;">👤 ${a.who}</span>`;
+    }
+    if(a.transport){
+      const el=document.getElementById('rs-transport-placeholder');
+      if(el) el.innerHTML=`<span style="color:var(--text-2);font-size:12.5px;">🚗 ${a.transport}</span>`;
+    }
+    if(a.equip){
+      const el=document.getElementById('rs-equip-placeholder');
+      if(el) el.innerHTML=`<span style="color:var(--text-2);font-size:12.5px;">🔧 ${a.equip}</span>`;
+    }
+  }, 60);
+}
+function saveGutAsAction(prefix){
+  const whatId=`gut-${prefix}-what`, whereId=`gut-${prefix}-where`;
+  const what=document.getElementById(whatId).value.trim();
+  const where=document.getElementById(whereId).value.trim();
+  if(!what){showNotif('⚠️ Informe o quê antes de salvar');return;}
+  const scoreEl=document.getElementById(`gut-${prefix}-score`);
+  const score=parseFloat(scoreEl?.textContent)||0;
+  let priority='low';
+  if(score>=4.5)priority='max';
+  else if(score>=3.5)priority='very-high';
+  else if(score>=2.5)priority='high';
+  else if(score>=1.5)priority='med';
+  openActionModal();
+  setTimeout(()=>{
+    document.getElementById('a-what').value=what;
+    document.getElementById('a-where').value=where;
+    document.getElementById('a-priority').value=priority;
+  },60);
+}
+function filterActions(f,btn){
+  actionFilter=f;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderActions();
+}
+function renderActions(){
+  const list=document.getElementById('actions-list');
+  const filtered=actionFilter==='all'?state.actions:state.actions.filter(a=>a.priority===actionFilter);
+  if(!filtered.length){
+    list.innerHTML=`<div class="empty-state"><div class="empty-state-icon">🎯</div><div class="empty-state-text">Nenhuma ação cadastrada${actionFilter!=='all'?' nesta prioridade':''}</div></div>`;
+    // home
+    document.getElementById('home-max-actions').innerHTML=`<div class="empty-state" style="padding:20px 0;"><div class="empty-state-icon">✅</div><div class="empty-state-text">Nenhuma ação de prioridade máxima</div></div>`;
+    return;
+  }
+  const order=['max','very-high','high','med-high','med','low','very-low'];
+  const sorted=[...filtered].sort((a,b)=>order.indexOf(a.priority)-order.indexOf(b.priority));
+  list.innerHTML=sorted.map(a=>`
+    <div class="action-card ${a.priority}">
+      <div class="action-header">
+        ${pBadge(a.priority)}
+        <div class="action-title">${a.what}</div>
+        <div style="display:flex;gap:6px;flex-shrink:0;">
+          <button class="btn btn-ghost btn-sm" onclick="editAction(${a.id})">✏️ Editar</button>
+          <button class="btn btn-ghost btn-sm" onclick="removeAction(${a.id})" style="color:var(--red);">🗑</button>
+        </div>
+      </div>
+      <div class="action-meta">
+        ${a.where?`<span class="action-meta-item">📍 ${a.where}</span>`:''}
+        ${a.when?`<span class="action-meta-item">🕐 ${new Date(a.when).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}</span>`:''}
+        ${a.via?`<span class="action-meta-item">🗺️ ${a.via}</span>`:''}
+        ${a.who?`<span class="action-meta-item">👤 ${a.who}</span>`:''}
+      </div>
+      ${(a.transport||a.equip||a.why||a.comments||a.info)?`<div class="action-tags">
+        ${a.transport?`<span class="action-tag">🚗 ${a.transport}</span>`:''}
+        ${a.equip?`<span class="action-tag">🔧 ${a.equip}</span>`:''}
+        ${a.why?`<span class="action-tag">Por quê: ${a.why}</span>`:''}
+        ${a.comments?`<span class="action-tag">📋 ${a.comments}</span>`:''}
+        ${a.info?`<span class="action-tag">ℹ️ ${a.info}</span>`:''}
+      </div>`:''}
+    </div>`).join('');
+  // home max
+  const maxList=state.actions.filter(a=>a.priority==='max');
+  document.getElementById('home-max-actions').innerHTML=maxList.length===0
+    ?`<div class="empty-state" style="padding:20px 0;"><div class="empty-state-icon">✅</div><div class="empty-state-text">Nenhuma ação de prioridade máxima</div></div>`
+    :maxList.map(a=>`<div style="padding:9px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:flex-start;"><div style="width:6px;height:6px;border-radius:50%;background:var(--red);margin-top:5px;flex-shrink:0;"></div><div><div style="font-weight:700;font-size:13.5px;">${a.what}</div>${a.where?`<div style="font-size:12px;color:var(--text-3);margin-top:1px;">📍 ${a.where}</div>`:''}</div></div>`).join('');
+}
+function removeAction(id){
+  state.actions=state.actions.filter(a=>a.id!==id);
+  renderActions(); updateBadges(); updateStats();
+  showNotif('🗑 Ação removida');
+}
+
+// ══════ HUMANS ══════
+function saveHuman(){
+  const spec=document.getElementById('h-specialty').value;
+  const name=document.getElementById('h-name').value.trim();
+  if(!spec||!name){showNotif('⚠️ Informe especialidade e nome');return;}
+  const editingId=parseInt(document.getElementById('h-editing-id').value)||null;
+  const avail=getAvailStr('h');
+  const data={
+    specialty:spec,name,
+    age:document.getElementById('h-age').value,avail,
+    contact:document.getElementById('h-contact').value.trim(),
+    resource:document.getElementById('h-resource').value.trim(),
+    org:document.getElementById('h-org').value.trim()
+  };
+  if(editingId){
+    const idx=state.humans.findIndex(h=>h.id===editingId);
+    if(idx>-1){ data.id=editingId; state.humans[idx]=data; }
+    showNotif('✅ Recurso humano atualizado!');
+  } else {
+    data.id=Date.now();
+    state.humans.push(data);
+    showNotif('✅ Recurso humano cadastrado!');
+  }
+  renderHumans(); updateBadges(); updateStats();
+  closeModal('modal-human');
+  document.getElementById('h-editing-id').value='';
+  document.getElementById('modal-human-title').textContent='👤 Recurso Humano';
+  document.getElementById('btn-save-human').textContent='💾 Salvar';
+  ['h-specialty','h-name','h-age','h-contact','h-resource','h-org'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  resetDatePicker('h');
+}
+function editHuman(id){
+  const h=state.humans.find(x=>x.id===id);
+  if(!h) return;
+  document.getElementById('modal-human-title').textContent='✏️ Editar Recurso Humano';
+  document.getElementById('btn-save-human').textContent='💾 Salvar Alterações';
+  document.getElementById('h-editing-id').value=id;
+  document.getElementById('h-specialty').value=h.specialty||'';
+  document.getElementById('h-name').value=h.name||'';
+  document.getElementById('h-age').value=h.age||'';
+  document.getElementById('h-contact').value=h.contact||'';
+  document.getElementById('h-resource').value=h.resource||'';
+  document.getElementById('h-org').value=h.org||'';
+  // Restaurar disponibilidade como texto no display
+  if(h.avail){
+    document.getElementById('drv-h').innerHTML=`<strong>${h.avail}</strong>`;
+  }
+  openModal('modal-human');
+}
+function renderHumans(){
+  const list=document.getElementById('human-list');
+  if(!state.humans.length){list.innerHTML=`<div class="empty-state"><div class="empty-state-icon">👥</div><div class="empty-state-text">Nenhum recurso humano cadastrado</div></div>`;return;}
+  list.innerHTML=state.humans.map(h=>`
+    <div class="resource-card">
+      <div>
+        <div class="resource-name">${h.name}</div>
+        <div class="resource-specialty">${h.specialty}</div>
+        <div class="resource-meta">
+          ${h.age?`<span class="resource-meta-item">🎂 ${h.age} anos</span>`:''}
+          ${h.avail?`<span class="resource-meta-item">📅 ${h.avail}</span>`:''}
+          ${h.contact?`<span class="resource-meta-item">📱 ${h.contact}</span>`:''}
+          ${h.org?`<span class="resource-meta-item">🏢 ${h.org}</span>`:''}
+          ${h.resource?`<span class="resource-meta-item">🔧 ${h.resource}</span>`:''}
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0;">
+        <button class="btn btn-ghost btn-sm" onclick="editHuman(${h.id})">✏️</button>
+        <button class="btn btn-ghost btn-sm" onclick="removeHuman(${h.id})" style="color:var(--red);">🗑</button>
+      </div>
+    </div>`).join('');
+}
+function removeHuman(id){
+  state.humans=state.humans.filter(h=>h.id!==id);
+  renderHumans(); updateBadges(); updateStats();
+  showNotif('🗑 Recurso humano removido');
+}
+
+// ══════ TRANSPORT ══════
+
+// Ícones e labels por via
+const VIA_META = {
+  'terrestre': { icon:'🚗', label:'Terrestre' },
+  'aquático':  { icon:'🚤', label:'Aquático'  },
+  'aéreo':     { icon:'✈️', label:'Aéreo'     },
+};
+
+function openTransportModal(via){
+  // limpar campos
+  document.getElementById('t-editing-id').value='';
+  document.getElementById('t-type').value='';
+  document.getElementById('t-qty').value='';
+  document.getElementById('t-org').value='';
+  document.getElementById('t-loc').value='';
+  document.getElementById('t-crew').value='';
+  document.getElementById('modal-transport-title').textContent='🚗 Recurso de Transporte';
+  document.getElementById('btn-save-transport').textContent='💾 Salvar';
+  resetDatePicker('t');
+
+  if(via){
+    // pré-selecionar e travar a via
+    document.getElementById('t-via').value = via;
+    setViaFixed(via);
+  } else {
+    setViaFree();
+  }
+  openModal('modal-transport');
+}
+
+function setViaFixed(via){
+  const meta = VIA_META[via] || {icon:'🚗', label: via};
+  document.getElementById('t-via').style.display = 'none';
+  const fixedDiv = document.getElementById('t-via-fixed');
+  fixedDiv.style.display = 'flex';
+  document.getElementById('t-via-fixed-icon').textContent  = meta.icon;
+  document.getElementById('t-via-fixed-label').textContent = meta.label;
+}
+
+function setViaFree(){
+  document.getElementById('t-via').style.display = '';
+  document.getElementById('t-via-fixed').style.display = 'none';
+}
+
+function saveTransport(){
+  const via=document.getElementById('t-via').value;
+  const type=document.getElementById('t-type').value.trim();
+  if(!type){showNotif('⚠️ Informe o tipo');return;}
+  const editingId=parseInt(document.getElementById('t-editing-id').value)||null;
+  const avail=getAvailStr('t');
+  const data={
+    via,type,
+    qty:document.getElementById('t-qty').value,
+    org:document.getElementById('t-org').value.trim(),avail,
+    loc:document.getElementById('t-loc').value.trim(),
+    crew:document.getElementById('t-crew').value.trim()
+  };
+  if(editingId){
+    const idx=state.transports.findIndex(t=>t.id===editingId);
+    if(idx>-1){ data.id=editingId; state.transports[idx]=data; }
+    showNotif('✅ Transporte atualizado!');
+  } else {
+    data.id=Date.now();
+    state.transports.push(data);
+    showNotif('✅ Transporte cadastrado!');
+  }
+  renderTransports(); updateBadges(); updateStats();
+  closeModal('modal-transport');
+  document.getElementById('t-editing-id').value='';
+  document.getElementById('modal-transport-title').textContent='🚗 Recurso de Transporte';
+  document.getElementById('btn-save-transport').textContent='💾 Salvar';
+  ['t-type','t-qty','t-org','t-loc','t-crew'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  resetDatePicker('t');
+  setViaFree();
+}
+function editTransport(id){
+  const t=state.transports.find(x=>x.id===id);
+  if(!t) return;
+  document.getElementById('modal-transport-title').textContent='✏️ Editar Transporte';
+  document.getElementById('btn-save-transport').textContent='💾 Salvar Alterações';
+  document.getElementById('t-editing-id').value=id;
+  document.getElementById('t-via').value=t.via||'terrestre';
+  document.getElementById('t-type').value=t.type||'';
+  document.getElementById('t-qty').value=t.qty||'';
+  document.getElementById('t-org').value=t.org||'';
+  document.getElementById('t-loc').value=t.loc||'';
+  document.getElementById('t-crew').value=t.crew||'';
+  if(t.avail){ document.getElementById('drv-t').innerHTML=`<strong>${t.avail}</strong>`; }
+  // na edição a via fica livre para alteração
+  setViaFree();
+  openModal('modal-transport');
+}
+function renderTransports(){
+  ['terra','agua','ar'].forEach(v=>{
+    const viaMap={terra:'terrestre',agua:'aquático',ar:'aéreo'};
+    const items=state.transports.filter(t=>t.via===viaMap[v]);
+    const cont=document.getElementById('transport-'+v);
+    cont.innerHTML=items.length===0
+      ?`<div style="padding:18px;text-align:center;font-size:12px;color:var(--text-4);">Nenhum cadastrado</div>`
+      :items.map(t=>`
+        <div class="transport-item">
+          <div class="transport-item-type">${t.type} ${t.qty?`<span style="color:var(--cyan);font-family:var(--font-mono);font-size:12px;margin-left:4px;">×${t.qty}</span>`:''}</div>
+          <div class="transport-item-meta">${[t.org,t.avail?'📅 '+t.avail:'',t.loc].filter(Boolean).join(' · ')}</div>
+          ${t.crew?`<div class="transport-item-meta" style="margin-top:2px;">👥 ${t.crew}</div>`:''}
+          <div style="display:flex;gap:6px;margin-top:6px;">
+            <button class="btn btn-ghost btn-sm" onclick="editTransport(${t.id})">✏️ Editar</button>
+            <button class="btn btn-ghost btn-sm" onclick="removeTransport(${t.id})" style="color:var(--red);">🗑 Remover</button>
+          </div>
+        </div>`).join('');
+  });
+}
+function removeTransport(id){
+  state.transports=state.transports.filter(t=>t.id!==id);
+  renderTransports(); updateBadges(); updateStats();
+  showNotif('🗑 Transporte removido');
+}
+
+// ══════ EQUIPMENT ══════
+function saveEquip(){
+  const desc=document.getElementById('e-desc').value.trim();
+  if(!desc){showNotif('⚠️ Informe a descrição');return;}
+  const editingId=parseInt(document.getElementById('e-editing-id').value)||null;
+  const avail=getAvailStr('e');
+  const data={
+    desc,
+    details:document.getElementById('e-details').value.trim(),
+    qty:document.getElementById('e-qty').value,
+    org:document.getElementById('e-org').value.trim(),avail,
+    loc:document.getElementById('e-loc').value.trim(),
+    crew:document.getElementById('e-crew').value.trim()
+  };
+  if(editingId){
+    const idx=state.equips.findIndex(e=>e.id===editingId);
+    if(idx>-1){ data.id=editingId; state.equips[idx]=data; }
+    showNotif('✅ Equipamento atualizado!');
+  } else {
+    data.id=Date.now();
+    state.equips.push(data);
+    showNotif('✅ Equipamento cadastrado!');
+  }
+  renderEquips(); updateBadges(); updateStats();
+  closeModal('modal-equip');
+  document.getElementById('e-editing-id').value='';
+  document.getElementById('modal-equip-title').textContent='🔧 Equipamento';
+  document.getElementById('btn-save-equip').textContent='💾 Salvar';
+  ['e-desc','e-details','e-qty','e-org','e-loc','e-crew'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  resetDatePicker('e');
+}
+function editEquip(id){
+  const e=state.equips.find(x=>x.id===id);
+  if(!e) return;
+  document.getElementById('modal-equip-title').textContent='✏️ Editar Equipamento';
+  document.getElementById('btn-save-equip').textContent='💾 Salvar Alterações';
+  document.getElementById('e-editing-id').value=id;
+  document.getElementById('e-desc').value=e.desc||'';
+  document.getElementById('e-details').value=e.details||'';
+  document.getElementById('e-qty').value=e.qty||'';
+  document.getElementById('e-org').value=e.org||'';
+  document.getElementById('e-loc').value=e.loc||'';
+  document.getElementById('e-crew').value=e.crew||'';
+  if(e.avail){ document.getElementById('drv-e').innerHTML=`<strong>${e.avail}</strong>`; }
+  openModal('modal-equip');
+}
+function renderEquips(){
+  const list=document.getElementById('equip-list');
+  if(!state.equips.length){list.innerHTML=`<div class="empty-state"><div class="empty-state-icon">🔧</div><div class="empty-state-text">Nenhum equipamento cadastrado</div></div>`;return;}
+  list.innerHTML=state.equips.map(e=>`
+    <div class="resource-card">
+      <div>
+        <div class="resource-name">${e.desc} ${e.qty?`<span style="color:var(--cyan);font-family:var(--font-mono);font-size:12px;margin-left:6px;">×${e.qty}</span>`:''}</div>
+        ${e.details?`<div style="font-size:12.5px;color:var(--text-3);margin-bottom:6px;">${e.details}</div>`:''}
+        <div class="resource-meta">
+          ${e.org?`<span class="resource-meta-item">🏢 ${e.org}</span>`:''}
+          ${e.avail?`<span class="resource-meta-item">📅 ${e.avail}</span>`:''}
+          ${e.loc?`<span class="resource-meta-item">📍 ${e.loc}</span>`:''}
+          ${e.crew?`<span class="resource-meta-item">👥 ${e.crew}</span>`:''}
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0;">
+        <button class="btn btn-ghost btn-sm" onclick="editEquip(${e.id})">✏️</button>
+        <button class="btn btn-ghost btn-sm" onclick="removeEquip(${e.id})" style="color:var(--red);">🗑</button>
+      </div>
+    </div>`).join('');
+}
+function removeEquip(id){
+  state.equips=state.equips.filter(e=>e.id!==id);
+  renderEquips(); updateBadges(); updateStats();
+  showNotif('🗑 Equipamento removido');
+}
+
+// ══════ BADGES & STATS ══════
+function updateBadges(){
+  document.getElementById('badge-actions').textContent=state.actions.length;
+  document.getElementById('badge-human').textContent=state.humans.length;
+  document.getElementById('badge-transport').textContent=state.transports.length;
+  document.getElementById('badge-equip').textContent=state.equips.length;
+}
+function updateStats(){
+  document.getElementById('stat-max').textContent=state.actions.filter(a=>a.priority==='max').length;
+  document.getElementById('stat-very-high').textContent=state.actions.filter(a=>a.priority==='very-high').length;
+  document.getElementById('stat-human-total').textContent=state.humans.length;
+  document.getElementById('stat-transport-total').textContent=state.transports.reduce((s,t)=>s+(parseInt(t.qty)||1),0);
+}
+
+// ══════ RESOURCE SELECTOR (para modal de ação) ══════
+
+// Helper: verifica se um recurso está disponível na data da ação
+function getActionDate(){
+  const val = document.getElementById('a-when')?.value;
+  if(!val) return null;
+  // extrai apenas a parte da data (YYYY-MM-DD)
+  return val.substring(0,10);
+}
+
+function isResourceAvailable(resource, actionDateStr){
+  // se não tem data da ação, mostra tudo
+  if(!actionDateStr) return true;
+  // se o recurso não tem disponibilidade cadastrada, mostra (com aviso no sub)
+  if(!resource.avail) return true;
+  // extrai datas do campo avail (formato "dd/mm/yyyy → dd/mm/yyyy (N dias)" ou "A partir de dd/mm/yyyy")
+  const parseBR = s => {
+    const m = s.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+    return m ? `${m[3]}-${m[2]}-${m[1]}` : null;
+  };
+  const dates = resource.avail.match(/(\d{2}\/\d{2}\/\d{4})/g) || [];
+  if(dates.length === 0) return true; // formato não reconhecido → mostra
+  const startISO = parseBR(dates[0]);
+  const endISO   = dates[1] ? parseBR(dates[1]) : null;
+  if(!startISO) return true;
+  const actionDate = new Date(actionDateStr);
+  const start      = new Date(startISO);
+  if(endISO){
+    const end = new Date(endISO);
+    return actionDate >= start && actionDate <= end;
+  } else {
+    // "a partir de" → disponível a partir dessa data em diante
+    return actionDate >= start;
+  }
+}
+
+function onActionDateChange(){
+  const d = getActionDate();
+  document.getElementById('a-when-hint').style.display = d ? 'block' : 'none';
+  // repopular os lists que estiverem abertos
+  ['who','transport','equip'].forEach(k=>{
+    if(document.getElementById(`rs-${k}-dropdown`)?.classList.contains('open')){
+      populateRSList(k);
+    }
+  });
+}
+
+// Configuração de cada selector
+const RS_CONFIG = {
+  who: {
+    getItems: () => state.humans,
+    getName: h => h.name,
+    getSub:  h => `${h.specialty}${h.org?' · '+h.org:''}${h.avail?' · '+h.avail:''}`,
+    empty: 'Nenhum recurso humano cadastrado ainda. Cadastre em Recursos > Humanos.',
+  },
+  transport: {
+    getItems: () => state.transports,
+    getName: t => `${t.type}${t.qty?' ×'+t.qty:''}`,
+    getSub:  t => `${t.via}${t.org?' · '+t.org:''}${t.avail?' · '+t.avail:''}${t.loc?' · '+t.loc:''}`,
+    empty: 'Nenhum transporte cadastrado ainda. Cadastre em Recursos > Transporte.',
+  },
+  equip: {
+    getItems: () => state.equips,
+    getName: e => `${e.desc}${e.qty?' ×'+e.qty:''}`,
+    getSub:  e => `${e.org||''}${e.avail?' · '+e.avail:''}${e.loc?' · '+e.loc:''}`,
+    empty: 'Nenhum equipamento cadastrado ainda. Cadastre em Recursos > Equipamentos.',
+  },
+};
+
+function populateRSList(key, filter=''){
+  const cfg = RS_CONFIG[key];
+  const listEl = document.getElementById(`rs-${key}-list`);
+  const actionDate = getActionDate();
+  const allItems = cfg.getItems();
+  const lf = filter.toLowerCase();
+
+  // separar disponíveis e indisponíveis na data selecionada
+  const available = allItems.filter(i => {
+    const nameMatch = !lf || cfg.getName(i).toLowerCase().includes(lf) || cfg.getSub(i).toLowerCase().includes(lf);
+    return nameMatch && isResourceAvailable(i, actionDate);
+  });
+  const unavailable = actionDate ? allItems.filter(i => {
+    const nameMatch = !lf || cfg.getName(i).toLowerCase().includes(lf) || cfg.getSub(i).toLowerCase().includes(lf);
+    return nameMatch && !isResourceAvailable(i, actionDate);
+  }) : [];
+
+  if(!available.length && !unavailable.length){
+    listEl.innerHTML = `<div class="rs-empty">${filter ? 'Nenhum resultado para "'+filter+'"' : cfg.empty}</div>`;
+    return;
+  }
+
+  const renderItem = (item, disabled) => {
+    const sel = rsSelected[key].has(item.id);
+    const subText = cfg.getSub(item);
+    const availNote = disabled
+      ? `<span style="color:var(--red);font-size:10px;font-weight:600;"> — fora do período</span>`
+      : (!item.avail ? `<span style="color:var(--text-4);font-size:10px;"> — sem data cadastrada</span>` : '');
+    return `<div class="rs-item${sel&&!disabled?' selected':''}${disabled?' rs-item-disabled':''}"
+      onclick="${disabled?'showNotif(\'⚠️ Este recurso não está disponível na data da ação\')':'toggleRSItem(\''+key+'\','+item.id+')'}"
+      style="${disabled?'opacity:0.45;cursor:not-allowed;':''}">
+      <div class="rs-checkbox" style="${disabled?'border-color:var(--border);background:var(--surface2);':''}">
+        <span class="rs-checkbox-tick" style="${sel&&!disabled?'':'display:none'}">✓</span>
+      </div>
+      <div class="rs-item-main">
+        <div class="rs-item-name">${cfg.getName(item)}</div>
+        <div class="rs-item-sub">${subText}${availNote}</div>
+      </div>
+    </div>`;
+  };
+
+  let html = available.map(i => renderItem(i, false)).join('');
+
+  if(unavailable.length){
+    html += `<div style="padding:7px 14px;font-size:10px;font-weight:700;color:var(--red);letter-spacing:0.8px;text-transform:uppercase;background:var(--red-light);border-top:1px solid var(--border);">
+      Indisponíveis na data selecionada
+    </div>`;
+    html += unavailable.map(i => renderItem(i, true)).join('');
+  }
+
+  if(!html){
+    listEl.innerHTML = `<div class="rs-empty">${cfg.empty}</div>`;
+    return;
+  }
+  listEl.innerHTML = html;
+}
+
+function toggleRS(key){
+  const drop = document.getElementById(`rs-${key}-dropdown`);
+  const disp = document.getElementById(`rs-${key}-display`);
+  const isOpen = drop.classList.contains('open');
+  // fechar todos
+  ['who','transport','equip'].forEach(k=>{
+    document.getElementById(`rs-${k}-dropdown`).classList.remove('open');
+    document.getElementById(`rs-${k}-display`).classList.remove('open');
+  });
+  if(!isOpen){
+    drop.classList.add('open');
+    disp.classList.add('open');
+    populateRSList(key);
+    // limpar busca
+    const search = drop.querySelector('.rs-search');
+    if(search) search.value='';
+  }
+}
+
+function filterRS(key, val){
+  populateRSList(key, val);
+}
+
+function toggleRSItem(key, id){
+  if(rsSelected[key].has(id)) rsSelected[key].delete(id);
+  else rsSelected[key].add(id);
+  populateRSList(key, document.getElementById(`rs-${key}-dropdown`).querySelector('.rs-search')?.value||'');
+  updateRSDisplay(key);
+  renderRSTags(key);
+}
+
+function updateRSDisplay(key){
+  const cnt = rsSelected[key].size;
+  const disp = document.getElementById(`rs-${key}-display`);
+  const placeholder = document.getElementById(`rs-${key}-placeholder`);
+  if(cnt===0){
+    placeholder.outerHTML = `<span class="rs-placeholder" id="rs-${key}-placeholder">${
+      key==='who'?'Selecionar recursos humanos...':key==='transport'?'Selecionar transporte...':'Selecionar equipamentos...'
+    }</span>`;
+  } else {
+    const el = document.getElementById(`rs-${key}-placeholder`);
+    if(el) el.outerHTML = `<span id="rs-${key}-placeholder" style="display:flex;align-items:center;gap:8px;"><span class="rs-selected-count">${cnt}</span><span style="font-size:13px;color:var(--text-2);">${cnt===1?'item selecionado':'itens selecionados'}</span></span>`;
+  }
+}
+
+function renderRSTags(key){
+  const cfg = RS_CONFIG[key];
+  const tagsEl = document.getElementById(`rs-${key}-tags`);
+  if(!tagsEl) return;
+  const items = cfg.getItems().filter(i => rsSelected[key].has(i.id));
+  tagsEl.innerHTML = items.map(i => `
+    <div class="rs-tag">
+      <span>${cfg.getName(i)}</span>
+      <span class="rs-tag-remove" onclick="toggleRSItem('${key}',${i.id})">×</span>
+    </div>`).join('');
+}
+
+function confirmRS(key){
+  document.getElementById(`rs-${key}-dropdown`).classList.remove('open');
+  document.getElementById(`rs-${key}-display`).classList.remove('open');
+}
+
+// Fechar dropdowns ao clicar fora
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.resource-selector')){
+    ['who','transport','equip'].forEach(k=>{
+      document.getElementById(`rs-${k}-dropdown`)?.classList.remove('open');
+      document.getElementById(`rs-${k}-display`)?.classList.remove('open');
+    });
+  }
+});
+
+// Repopular ao abrir o modal de ação (para refletir recursos cadastrados)
+document.getElementById('modal-action').addEventListener('transitionend', ()=>{});
+function openActionModal(){
+  rsSelected.who.clear(); rsSelected.transport.clear(); rsSelected.equip.clear();
+  updateRSDisplay('who'); updateRSDisplay('transport'); updateRSDisplay('equip');
+  renderRSTags('who'); renderRSTags('transport'); renderRSTags('equip');
+  document.getElementById('a-editing-id').value='';
+  document.getElementById('modal-action-title').textContent='📋 Nova Ação';
+  document.getElementById('btn-save-action').textContent='💾 Salvar Ação';
+  openModal('modal-action');
+}
+
+// ══════ MAPA (Leaflet OSM) ══════
+let mapInstance = null;
+let mapMarker  = null;
+let mapPinData = null; // {lat, lng, label}
+
+function openMapPicker(){
+  openModal('modal-map');
+  setTimeout(initMap, 120);
+}
+
+function initMap(){
+  document.getElementById('map-loading').style.display = 'flex';
+  if(mapInstance){ mapInstance.invalidateSize(); document.getElementById('map-loading').style.display='none'; return; }
+
+  // Carregar Leaflet dinamicamente
+  if(!document.getElementById('leaflet-css')){
+    const css = document.createElement('link');
+    css.id = 'leaflet-css'; css.rel = 'stylesheet';
+    css.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+    document.head.appendChild(css);
+  }
+  if(!window.L){
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+    script.onload = () => { document.getElementById('map-loading').style.display='none'; buildMap(); };
+    document.head.appendChild(script);
+  } else {
+    document.getElementById('map-loading').style.display='none';
+    buildMap();
+  }
+}
+
+function buildMap(){
+  if(mapInstance) return;
+  // Centro padrão: Rio de Janeiro
+  mapInstance = L.map('map-inner').setView([-22.9, -43.2], 9);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors', maxZoom: 18
+  }).addTo(mapInstance);
+
+  // Ícone personalizado
+  const icon = L.divIcon({
+    html: '<div style="background:#dc2626;width:20px;height:20px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.4);"></div>',
+    iconSize:[20,20], iconAnchor:[10,20], className:''
+  });
+
+  mapInstance.on('click', e => {
+    const {lat, lng} = e.latlng;
+    placeMapPin(lat, lng, null, icon);
+    reverseGeocode(lat, lng);
+  });
+
+  // Se já existe um pin salvo, restaurar
+  if(mapPinData){
+    placeMapPin(mapPinData.lat, mapPinData.lng, mapPinData.label, icon);
+    mapInstance.setView([mapPinData.lat, mapPinData.lng], 13);
+  }
+}
+
+function placeMapPin(lat, lng, label, icon){
+  if(!window.L) return;
+  const ico = icon || L.divIcon({
+    html: '<div style="background:#dc2626;width:20px;height:20px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.4);"></div>',
+    iconSize:[20,20], iconAnchor:[10,20], className:''
+  });
+  if(mapMarker) mapMarker.remove();
+  mapMarker = L.marker([lat,lng], {icon: ico}).addTo(mapInstance);
+  mapPinData = {lat: lat.toFixed(5), lng: lng.toFixed(5), label: label||`${lat.toFixed(4)}, ${lng.toFixed(4)}`};
+  const selDiv = document.getElementById('map-selected');
+  const selLabel = document.getElementById('map-selected-label');
+  if(selDiv && selLabel){
+    selLabel.textContent = mapPinData.label;
+    selDiv.style.display = 'block';
+  }
+  const btn = document.getElementById('btn-confirm-map');
+  if(btn){ btn.disabled=false; btn.style.opacity='1'; }
+}
+
+function reverseGeocode(lat, lng){
+  fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=pt-BR`)
+    .then(r=>r.json())
+    .then(data=>{
+      const addr = data.display_name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+      const short = addr.split(',').slice(0,3).join(',').trim();
+      mapPinData.label = short;
+      document.getElementById('map-selected-label').textContent = short;
+    })
+    .catch(()=>{});
+}
+
+function searchMapAddress(){
+  const q = document.getElementById('map-search-input').value.trim();
+  if(!q || !window.L){ showNotif('⚠️ Informe um endereço para buscar'); return; }
+  fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&accept-language=pt-BR`)
+    .then(r=>r.json())
+    .then(data=>{
+      if(!data.length){ showNotif('⚠️ Localização não encontrada'); return; }
+      const {lat, lon, display_name} = data[0];
+      const short = display_name.split(',').slice(0,3).join(',').trim();
+      mapInstance.setView([parseFloat(lat), parseFloat(lon)], 13);
+      placeMapPin(parseFloat(lat), parseFloat(lon), short);
+    })
+    .catch(()=>showNotif('⚠️ Erro ao buscar endereço'));
+}
+
+function confirmMapPin(){
+  if(!mapPinData) return;
+  const areaInput = document.getElementById('incident-area');
+  // acrescentar coordenadas ao texto da área
+  const currentVal = areaInput.value.trim();
+  const coordStr = `${mapPinData.label} (${mapPinData.lat}, ${mapPinData.lng})`;
+  areaInput.value = coordStr;
+  // mostrar preview no hero
+  document.getElementById('incident-coords-label').textContent = coordStr;
+  document.getElementById('incident-map-preview').style.display = 'flex';
+  closeModal('modal-map');
+  showNotif('📍 Localização marcada no mapa!');
+}
+
+function clearMapPin(){
+  mapPinData = null;
+  if(mapMarker){ mapMarker.remove(); mapMarker=null; }
+  document.getElementById('incident-coords-label').textContent='';
+  document.getElementById('incident-map-preview').style.display='none';
+  document.getElementById('incident-area').value='';
+}
+
+// ══════ INIT ══════
+buildGutUI(gutRescue,'r','gutR');
+buildGutUI(gutGeral,'g','gutG');
+renderActions(); renderHumans(); renderTransports(); renderEquips();
+updateBadges(); updateStats();
+
+// Demo data
+setTimeout(()=>{
+  state.actions.push({id:1,what:'Resgatar famílias isoladas',where:'Rua das Flores, 120',priority:'max',via:'aquático',when:new Date().toISOString(),who:'CBMERJ',how:'Bote inflável',why:'Famílias sem acesso por terra',comments:'',info:''});
+  state.actions.push({id:2,what:'Verificar movimento de massa',where:'Bairro Alto — encosta norte',priority:'very-high',via:'terrestre',who:'Geólogo + equipe 4x4',how:'Veículo 4x4',why:'Solo instável após chuvas',comments:'Chuva deve continuar por 48h',info:''});
+  state.actions.push({id:3,what:'Reestabelecimento de energia — Hospital Regional',where:'Centro',priority:'very-high',via:'terrestre',who:'Equipe elétrica municipal',how:'Caminhão de manutenção',why:'Hospital sem energia há 6h',comments:'',info:''});
+  state.transports.push({id:10,via:'terrestre',type:'Veículo 4x4',qty:'25',org:'Associação de Jipeiros',avail:'05/06/2025 → 20/06/2025 (15 dias)',loc:'Defesa Civil de Canoas',crew:'Todos com motoristas habilitados'});
+  state.transports.push({id:11,via:'aquático',type:'Botes infláveis',qty:'50',org:'Defesa Civil Estadual',avail:'',loc:'Ginásio xyz',crew:''});
+  state.transports.push({id:12,via:'aéreo',type:'Helicóptero',qty:'5',org:'PM São Paulo',avail:'05/06/2025 → 12/06/2025 (7 dias)',loc:'Bento Gonçalves',crew:'Com pilotos habilitados'});
+  state.humans.push({id:20,specialty:'Avaliação de taludes — geólogo',name:'Carlos Andrade',age:'50',avail:'05/06/2025 → 12/06/2025 (7 dias)',contact:'(51) 99900-1234',resource:'Trena a laser',org:'Defesa Civil Estadual'});
+  renderActions(); renderHumans(); renderTransports(); renderEquips();
+  updateBadges(); updateStats();
+},100);
+</script>
+</body>
+</html>
