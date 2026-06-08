@@ -754,29 +754,298 @@ select option { background: white; }
 }
 .rs-tag-remove:hover { opacity: 1; }
 
+/* ══════════════════════════════════════
+   RESPONSIVO — SMARTPHONE
+══════════════════════════════════════ */
+
+/* Tablet: 600–900px */
 @media (max-width: 900px) {
-  nav { width: 56px; }
-  .nav-btn span:not(.nav-icon):not(.nav-badge) { display: none; }
-  .nav-group-label { display: none; }
-  .incident-form { grid-template-columns: 1fr; }
+  nav { width: 200px; }
   .grid-4 { grid-template-columns: 1fr 1fr; }
-  .grid-2, .grid-3 { grid-template-columns: 1fr; }
   .transport-grid { grid-template-columns: 1fr; }
 }
+
+/* Smartphone: ≤ 600px */
+@media (max-width: 600px) {
+
+  /* Header compacto */
+  header {
+    padding: 0 14px;
+    height: 54px;
+  }
+  .logo-icon { width: 32px; height: 32px; font-size: 15px; }
+  .logo-name { font-size: 17px; }
+  .logo-sub  { font-size: 9px; }
+  /* Esconder subtítulo longo no header */
+  header .logo > div > div:first-child > div:last-child { display: none; }
+  /* Esconder incidente e badge no header — aparecem no hero */
+  .header-incident { display: none; }
+  .live-badge { padding: 4px 8px; font-size: 10px; }
+  .live-badge span:last-child { display: none; } /* esconder texto "Operacional" */
+
+  /* Layout: nav vira bottom-bar */
+  .app-layout { flex-direction: column; }
+
+  nav {
+    position: fixed;
+    top: 54px;
+    left: -100%;
+    width: 260px;
+    height: calc(100vh - 54px);
+    z-index: 150;
+    transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-lg);
+    overflow-y: auto;
+  }
+  nav.open { left: 0; }
+
+  /* Overlay escuro ao abrir nav */
+  .nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,0.45);
+    z-index: 140;
+    backdrop-filter: blur(2px);
+  }
+  .nav-overlay.open { display: block; }
+
+  /* Botão hamburguer */
+  .nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  main {
+    padding: 14px;
+    min-height: calc(100vh - 54px);
+  }
+
+  /* Hero */
+  .home-hero { padding: 20px 18px; border-radius: 10px; }
+  .hero-title { font-size: 20px; }
+  .hero-sub   { font-size: 12px; margin-bottom: 16px; }
+
+  /* Grids colapsam */
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .transport-grid { grid-template-columns: 1fr; }
+
+  /* Page header: título + botão em coluna */
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .page-title { font-size: 20px; }
+
+  /* Tab row: scroll horizontal */
+  .tab-row {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+  .tab-btn { white-space: nowrap; flex-shrink: 0; font-size: 11.5px; padding: 6px 10px; }
+
+  /* Modais: tela cheia */
+  .modal-overlay { align-items: flex-end; padding: 0; }
+  .modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: 16px 16px 0 0;
+    padding: 20px 16px;
+  }
+  .modal::before {
+    content: '';
+    display: block;
+    width: 36px; height: 4px;
+    background: var(--border2);
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+
+  /* Date picker: full width */
+  .date-picker-popup { width: 100%; left: 0; right: 0; }
+  .date-picker-grid { grid-template-columns: 1fr; gap: 10px; }
+
+  /* GUT items: empilhar label + opções */
+  .gut-item {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 12px 12px;
+  }
+  .gut-score { text-align: left; font-size: 18px; }
+  .gut-options-row { gap: 3px; }
+  .gut-opt { padding: 6px 2px; font-size: 9.5px; }
+
+  /* GUT topo: coluna em mobile */
+  .gut-top-row { grid-template-columns: 1fr !important; }
+
+  /* Stats: 2 colunas */
+  .grid-4 { grid-template-columns: 1fr 1fr; }
+  .stat-number { font-size: 32px; }
+
+  /* Action cards: simplificar */
+  .action-header { flex-wrap: wrap; gap: 6px; }
+
+  /* Resource cards: stack */
+  .resource-card { grid-template-columns: 1fr; }
+  .resource-card > div:last-child { display: flex; gap: 6px; }
+
+  /* Transport col headers */
+  .transport-col-header { font-size: 12px; }
+
+  /* Resource selector dropdown */
+  .rs-dropdown { position: fixed; left: 0; right: 0; bottom: 0; top: auto;
+    border-radius: 16px 16px 0 0; max-height: 70vh; border: none;
+    box-shadow: 0 -4px 30px rgba(0,0,0,0.15);
+  }
+  .rs-list { max-height: 50vh; }
+
+  /* Via cards no hero */
+  .via-card { padding: 10px 12px; }
+
+  /* Botões: toque mais fácil */
+  .btn { padding: 10px 16px; font-size: 13px; }
+  .btn-sm { padding: 7px 12px; font-size: 11.5px; }
+
+  /* Hero: incidente em coluna */
+  .hero-row-incident {
+    grid-template-columns: 1fr;
+  }
+  .btn-hero { width: 100%; justify-content: center; }
+  .hero-title { font-size: 18px; }
+
+  /* Modal de ação: grid-2 interno */
+  .modal .grid-2 { grid-template-columns: 1fr; }
+
+  /* Linha de acesso no hero */
+  .home-hero > .form-group > div { flex-wrap: wrap; }
+
+  /* Banco de dados: input + botão em coluna */
+  #screen-database .card > div:nth-child(3) { flex-direction: column; }
+  #screen-database .card > div:nth-child(3) input { width: 100%; }
+
+  /* GUT topo: forçar coluna única (sobrescreve inline style) */
+  [class*="gut-top"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Matriz de risco: scroll horizontal */
+  .matrix-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Ocultar coluna 'Por quê/justificativa' em tabelas pequenas */
+  .action-tags { flex-direction: column; }
+
+  /* Date picker: posição relativa no mobile para não escapar da tela */
+  .date-picker-popup {
+    position: fixed;
+    left: 0 !important; right: 0 !important;
+    bottom: 0; top: auto !important;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 30px rgba(0,0,0,0.15);
+    width: 100% !important;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  /* Grids internos do home */
+  .home-how-grid { flex-direction: column; }
+
+  /* Stat card: texto menor */
+  .stat-label { font-size: 10px; }
+
+  /* Resource card botões: linha */
+  .resource-card > div:last-child { flex-direction: row; flex-wrap: wrap; }
+
+  /* Transport col: botão cadastrar cabe na linha */
+  .transport-col-header { flex-wrap: wrap; gap: 6px; }
+
+  /* Modal map: altura menor */
+  #map-container { height: 260px !important; }
+
+  /* Scroll suave em toda a página */
+  html { scroll-behavior: smooth; }
+  main { overflow-x: hidden; }
+}
+
+/* ══ HERO FORM ROWS ══ */
+.hero-row-incident {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 10px;
+}
+/* Inputs dentro do hero */
+.home-hero input {
+  background: rgba(255,255,255,0.12);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: white;
+}
+.home-hero input::placeholder { color: rgba(255,255,255,0.45); }
+.home-hero input:focus { border-color: rgba(255,255,255,0.6); box-shadow: 0 0 0 3px rgba(255,255,255,0.12); }
+.home-hero label { color: rgba(255,255,255,0.75); }
+
+/* ══ BANCO DE DADOS ══ */
+.db-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 14px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); margin-bottom: 6px;
+  transition: box-shadow 0.12s;
+}
+.db-item:hover { box-shadow: var(--shadow-sm); }
+.db-item-text {
+  flex: 1; font-size: 13.5px; color: var(--text-2); font-weight: 500;
+  outline: none; background: transparent; border: none;
+  font-family: var(--font-body);
+}
+.db-item-text:focus {
+  color: var(--text);
+  background: var(--surface);
+  border-radius: 4px; padding: 2px 6px; margin: -2px -6px;
+  box-shadow: 0 0 0 2px var(--blue);
+}
+.db-item-actions { display: flex; gap: 5px; flex-shrink: 0; }
+.db-empty {
+  text-align: center; padding: 32px 16px;
+  color: var(--text-4); font-size: 13px;
+}
+
+/* Hamburguer: oculto no desktop */
+.nav-toggle { display: none; }
+@media (max-width: 600px) {
+  .nav-toggle { display: flex; }
+  .logo-tagline { display: none; }
+}
 </style>
-</head>
-<body>
+
+<!-- Overlay do nav (mobile) -->
+<div class="nav-overlay" id="nav-overlay" onclick="closeNav()"></div>
 
 <!-- HEADER -->
 <header>
-  <div class="logo">
-    <div class="logo-icon">S</div>
-    <div>
-      <div style="display:flex;align-items:baseline;gap:10px;">
-        <div class="logo-name">SIMEO</div>
-        <div style="font-size:11px;font-weight:500;color:var(--text-3);letter-spacing:0.3px;white-space:nowrap;">Sistema Integrado de Matrizes Estratégicas e Operacionais</div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
+    <div class="logo">
+      <div class="logo-icon">S</div>
+      <div>
+        <div style="display:flex;align-items:baseline;gap:10px;">
+          <div class="logo-name">SIMEO</div>
+          <div style="font-size:11px;font-weight:500;color:var(--text-3);letter-spacing:0.3px;white-space:nowrap;" class="logo-tagline">Sistema Integrado de Matrizes Estratégicas e Operacionais</div>
+        </div>
+        <div class="logo-sub">Alexandre Cardeman · SEDEC-RJ / GIGR-SEIF</div>
       </div>
-      <div class="logo-sub">Alexandre Cardeman · SEDEC-RJ / GIGR-SEIF</div>
     </div>
   </div>
   <div class="header-right">
@@ -828,6 +1097,13 @@ select option { background: white; }
       <span class="nav-badge" id="badge-equip">0</span>
     </button>
   </div>
+  <div class="nav-divider"></div>
+  <div class="nav-group">
+    <div class="nav-group-label">Configurações</div>
+    <button class="nav-btn" onclick="showScreen('database')">
+      <span class="nav-icon">🗂️</span><span>Banco de Dados</span>
+    </button>
+  </div>
 </nav>
 
 <!-- MAIN -->
@@ -840,12 +1116,12 @@ select option { background: white; }
     <div class="hero-sub">Gestão integrada de prioridades e recursos em emergências de chuvas intensas</div>
 
     <!-- Linha 1: Incidente + Ativar -->
-    <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-bottom:10px;">
+    <div class="hero-row-incident">
       <div class="form-group" style="margin:0">
         <label>Identificação do Incidente</label>
         <input type="text" id="incident-name" placeholder="ex: Enchente Petrópolis — Maio 2025">
       </div>
-      <button class="btn-hero" onclick="setIncident()" style="height:40px;white-space:nowrap;">⚡ Ativar Incidente</button>
+      <button class="btn-hero" onclick="setIncident()">⚡ Ativar Incidente</button>
     </div>
 
     <!-- Linha 2: Área com mapa -->
@@ -963,8 +1239,7 @@ select option { background: white; }
     <button class="btn btn-primary" onclick="saveGutAsAction('r')">💾 Salvar como Ação</button>
   </div>
   <!-- Topo: O Quê / Onde / Pontuação -->
-  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 300px;gap:14px;align-items:stretch;margin-bottom:22px;">
-    <div class="form-group" style="margin:0"><label>O quê (ocorrência)</label><input type="text" id="gut-r-what" placeholder="ex: Famílias isoladas em área inundada"></div>
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 300px;gap:14px;align-items:stretch;margin-bottom:22px;" class="gut-top-row">
     <div class="form-group" style="margin:0"><label>Onde (localização)</label><input type="text" id="gut-r-where" placeholder="ex: Rua das Flores, 120 — Petrópolis"></div>
     <div class="gut-result-box" style="margin:0;padding:16px 20px;background:linear-gradient(135deg,var(--surface2) 0%,var(--surface) 100%);border:2px solid var(--border2);min-width:0;flex-shrink:0;">
       <div>
@@ -994,7 +1269,7 @@ select option { background: white; }
     <button class="btn btn-primary" onclick="saveGutAsAction('g')">💾 Salvar como Ação</button>
   </div>
   <!-- Topo: O Quê / Onde / Pontuação -->
-  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 300px;gap:14px;align-items:stretch;margin-bottom:22px;">
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 300px;gap:14px;align-items:stretch;margin-bottom:22px;" class="gut-top-row">
     <div class="form-group" style="margin:0"><label>O quê (ocorrência)</label><input type="text" id="gut-g-what" placeholder="ex: Desabamento da Ponte da Rua X"></div>
     <div class="form-group" style="margin:0"><label>Onde (localização)</label><input type="text" id="gut-g-where" placeholder="ex: Bairro Centro — Canoas"></div>
     <div class="gut-result-box" style="margin:0;padding:16px 20px;background:linear-gradient(135deg,var(--surface2) 0%,var(--surface) 100%);border:2px solid var(--border2);min-width:0;flex-shrink:0;">
@@ -1024,7 +1299,7 @@ select option { background: white; }
     <div><div class="page-title">Matriz de Risco / Prioridade</div><div class="page-sub">GUT (Gravidade / Urgência / Tendência) × Tempo de Resposta necessário</div></div>
   </div>
   <div class="card">
-    <div style="overflow-x:auto;">
+    <div class="matrix-table-wrap" style="overflow-x:auto;">
       <table class="matrix-table">
         <thead>
           <tr>
@@ -1111,13 +1386,59 @@ select option { background: white; }
   </div>
 </div>
 
-<!-- ══════════ EQUIPAMENTOS ══════════ -->
-<div id="screen-equipment" class="screen">
+<!-- ══════════ BANCO DE DADOS ══════════ -->
+<div id="screen-database" class="screen">
   <div class="page-header">
-    <div><div class="page-title">Equipamentos</div><div class="page-sub">Ferramentas e materiais especializados cadastrados</div></div>
-    <button class="btn btn-primary" onclick="openModal('modal-equip')">+ Cadastrar</button>
+    <div>
+      <div class="page-title">Banco de Dados</div>
+      <div class="page-sub">Gerencie as listas pré-definidas usadas nos cadastros de recursos</div>
+    </div>
   </div>
-  <div id="equip-list"></div>
+
+  <div class="tab-row" id="db-tab-row">
+    <button class="tab-btn active" onclick="showDbTab('specialties', this)">👤 Especialidades</button>
+    <button class="tab-btn" onclick="showDbTab('transport-types', this)">🚗 Tipos de Transporte</button>
+    <button class="tab-btn" onclick="showDbTab('equip-types', this)">🔧 Tipos de Equipamento</button>
+  </div>
+
+  <!-- ABA: Especialidades -->
+  <div id="dbtab-specialties" class="db-tab-panel">
+    <div class="card">
+      <div class="card-title">👤 Especialidades — Recursos Humanos</div>
+      <p style="font-size:13px;color:var(--text-3);margin-bottom:16px;">Estas especialidades aparecem como sugestão no campo "Especialidade" ao cadastrar recursos humanos.</p>
+      <div style="display:flex;gap:8px;margin-bottom:18px;">
+        <input type="text" id="db-specialty-input" placeholder="Nova especialidade..." style="flex:1;" onkeydown="if(event.key==='Enter')addDbItem('specialties')">
+        <button class="btn btn-primary" onclick="addDbItem('specialties')">+ Adicionar</button>
+      </div>
+      <div id="db-specialties-list"></div>
+    </div>
+  </div>
+
+  <!-- ABA: Tipos de Transporte -->
+  <div id="dbtab-transport-types" class="db-tab-panel" style="display:none;">
+    <div class="card">
+      <div class="card-title">🚗 Tipos de Transporte</div>
+      <p style="font-size:13px;color:var(--text-3);margin-bottom:16px;">Estes tipos aparecem como sugestão no campo "Tipo / Descrição" ao cadastrar transportes.</p>
+      <div style="display:flex;gap:8px;margin-bottom:18px;">
+        <input type="text" id="db-transport-type-input" placeholder="Novo tipo de transporte..." style="flex:1;" onkeydown="if(event.key==='Enter')addDbItem('transport-types')">
+        <button class="btn btn-primary" onclick="addDbItem('transport-types')">+ Adicionar</button>
+      </div>
+      <div id="db-transport-types-list"></div>
+    </div>
+  </div>
+
+  <!-- ABA: Tipos de Equipamento -->
+  <div id="dbtab-equip-types" class="db-tab-panel" style="display:none;">
+    <div class="card">
+      <div class="card-title">🔧 Tipos de Equipamento</div>
+      <p style="font-size:13px;color:var(--text-3);margin-bottom:16px;">Estes tipos aparecem como sugestão no campo "Descrição" ao cadastrar equipamentos.</p>
+      <div style="display:flex;gap:8px;margin-bottom:18px;">
+        <input type="text" id="db-equip-type-input" placeholder="Novo tipo de equipamento..." style="flex:1;" onkeydown="if(event.key==='Enter')addDbItem('equip-types')">
+        <button class="btn btn-primary" onclick="addDbItem('equip-types')">+ Adicionar</button>
+      </div>
+      <div id="db-equip-types-list"></div>
+    </div>
+  </div>
 </div>
 
 </main>
@@ -1245,34 +1566,9 @@ select option { background: white; }
     </div>
     <input type="hidden" id="h-editing-id" value="">
     <div class="form-group">
-      <label>Especialidade</label>
-      <select id="h-specialty">
-        <option value="">Selecione a especialidade...</option>
-        <option>Socorro e resgate em campo — médico(a)</option>
-        <option>Socorro e resgate em campo — enfermeiro(a)</option>
-        <option>Socorro e resgate em campo — socorrista</option>
-        <option>Avaliação estrutural — engenheiro civil</option>
-        <option>Avaliação estrutural — técnico em edificações</option>
-        <option>Avaliação de taludes — geólogo</option>
-        <option>Avaliação de taludes — engenheiro</option>
-        <option>Mapeamento de áreas — geógrafo</option>
-        <option>Avaliação situacional — especialista/gestor</option>
-        <option>Atendimento às vítimas — psicólogo(a)</option>
-        <option>Atendimento às vítimas — assistente social</option>
-        <option>Atendimento às vítimas — voluntário</option>
-        <option>Mão de obra — carregar mantimentos</option>
-        <option>Motorista de veículos 4x4</option>
-        <option>Motorista de ônibus / caminhão</option>
-        <option>Piloto de jet ski</option>
-        <option>Piloto de lancha</option>
-        <option>Alimentação — nutricionista</option>
-        <option>Alimentação — cozinheiro(a)</option>
-        <option>Alimentação — auxiliar de cozinha</option>
-        <option>Organização de donativos — especialista</option>
-        <option>Organização de abrigos — especialista</option>
-        <option>Organização de abrigos — psicólogo/pedagogo</option>
-        <option>Outro</option>
-      </select>
+      <label>Especialidade <span style="font-size:10px;color:var(--text-3);font-weight:400;">(escolha da lista ou digite)</span></label>
+      <input type="text" id="h-specialty" list="dl-specialties" placeholder="Selecione ou digite a especialidade..." autocomplete="off">
+      <datalist id="dl-specialties"></datalist>
     </div>
     <div class="grid-2">
       <div class="form-group"><label>Nome completo</label><input type="text" id="h-name" placeholder="Nome da pessoa"></div>
@@ -1340,7 +1636,11 @@ select option { background: white; }
       </div>
     </div>
     <div class="grid-2">
-      <div class="form-group"><label>Tipo / Descrição</label><input type="text" id="t-type" placeholder="ex: Veículo 4x4, Bote inflável, Helicóptero"></div>
+      <div class="form-group">
+        <label>Tipo / Descrição <span style="font-size:10px;color:var(--text-3);font-weight:400;">(escolha ou digite)</span></label>
+        <input type="text" id="t-type" list="dl-transport-types" placeholder="ex: Veículo 4x4, Bote inflável..." autocomplete="off">
+        <datalist id="dl-transport-types"></datalist>
+      </div>
       <div class="form-group"><label>Quantidade</label><input type="number" id="t-qty" min="1" placeholder="ex: 10"></div>
     </div>
     <div class="grid-2">
@@ -1389,7 +1689,11 @@ select option { background: white; }
       <button class="modal-close" onclick="closeModal('modal-equip')">✕</button>
     </div>
     <input type="hidden" id="e-editing-id" value="">
-    <div class="form-group"><label>Descrição do equipamento</label><input type="text" id="e-desc" placeholder="ex: Maca para resgate, Trena a laser, Notebook"></div>
+    <div class="form-group">
+      <label>Descrição do equipamento <span style="font-size:10px;color:var(--text-3);font-weight:400;">(escolha ou digite)</span></label>
+      <input type="text" id="e-desc" list="dl-equip-types" placeholder="ex: Maca para resgate, Trena a laser..." autocomplete="off">
+      <datalist id="dl-equip-types"></datalist>
+    </div>
     <div class="form-group"><label>Detalhes / Especificações</label><input type="text" id="e-details" placeholder="ex: 20 metros, capacidade 150kg"></div>
     <div class="grid-2">
       <div class="form-group"><label>Quantidade</label><input type="number" id="e-qty" min="1" placeholder="ex: 5"></div>
@@ -1493,6 +1797,32 @@ const gutGeral = [
   {cat:'tendency',label:'Condição de Segurança',weight:1,opts:['Vai melhorar','Deve melhorar','Pode piorar','Tendência de piorar','Tendência de piora grave']},
 ];
 
+// ══════ NAV MOBILE ══════
+function toggleNav(){
+  const nav = document.querySelector('nav');
+  const overlay = document.getElementById('nav-overlay');
+  nav.classList.toggle('open');
+  overlay.classList.toggle('open');
+}
+function closeNav(){
+  document.querySelector('nav').classList.remove('open');
+  document.getElementById('nav-overlay').classList.remove('open');
+}
+
+// Responsividade dinâmica para grids com inline style
+function applyMobileLayout(){
+  const isMobile = window.innerWidth <= 600;
+  // GUT top rows (têm grid-template-columns inline que CSS não consegue sobrescrever facilmente)
+  document.querySelectorAll('.gut-top-row').forEach(el => {
+    el.style.gridTemplateColumns = isMobile ? '1fr' : 'minmax(0,1fr) minmax(0,1fr) 300px';
+    el.style.alignItems = isMobile ? 'stretch' : 'stretch';
+  });
+  // Modal de ação: "quando" fica em coluna só
+  const aWhenGroup = document.getElementById('a-when')?.closest('.form-group');
+  // nada a fazer, já usa form-group normal
+}
+window.addEventListener('resize', applyMobileLayout);
+
 // ══════ NAVIGATION ══════
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -1500,6 +1830,8 @@ function showScreen(id) {
   document.getElementById('screen-'+id).classList.add('active');
   const btn = [...document.querySelectorAll('.nav-btn')].find(b=>b.getAttribute('onclick')===`showScreen('${id}')`);
   if(btn) btn.classList.add('active');
+  closeNav(); // fecha o drawer no mobile após navegar
+  window.scrollTo(0,0);
 }
 
 // ══════ MODALS ══════
@@ -2503,11 +2835,162 @@ function clearMapPin(){
   document.getElementById('incident-area').value='';
 }
 
+// ══════ BANCO DE DADOS (catálogos editáveis) ══════
+
+// Catálogos: inicializados com valores padrão
+const catalog = {
+  specialties: [
+    'Socorro e resgate em campo — médico(a)',
+    'Socorro e resgate em campo — enfermeiro(a)',
+    'Socorro e resgate em campo — socorrista',
+    'Avaliação estrutural — engenheiro civil',
+    'Avaliação estrutural — técnico em edificações',
+    'Avaliação de taludes — geólogo',
+    'Avaliação de taludes — engenheiro',
+    'Mapeamento de áreas — geógrafo',
+    'Avaliação situacional — especialista/gestor',
+    'Atendimento às vítimas — psicólogo(a)',
+    'Atendimento às vítimas — assistente social',
+    'Atendimento às vítimas — voluntário',
+    'Mão de obra — carregar mantimentos',
+    'Motorista de veículos 4x4',
+    'Motorista de ônibus / caminhão',
+    'Piloto de jet ski',
+    'Piloto de lancha',
+    'Alimentação — nutricionista',
+    'Alimentação — cozinheiro(a)',
+    'Alimentação — auxiliar de cozinha',
+    'Organização de donativos — especialista',
+    'Organização de abrigos — especialista',
+    'Organização de abrigos — psicólogo/pedagogo',
+    'Outro',
+  ],
+  'transport-types': [
+    'Veículo 4x4',
+    'Caminhão',
+    'Ônibus',
+    'Motocicleta',
+    'Ambulância',
+    'Bote inflável',
+    'Lancha',
+    'Jet ski',
+    'Helicóptero',
+    'Avião de pequeno porte',
+    'Drone de carga',
+  ],
+  'equip-types': [
+    'Maca para resgate',
+    'Corda de resgate (20m)',
+    'Gerador de energia',
+    'Bomba d\'água',
+    'Kit primeiros socorros',
+    'Desfibrilador (DEA)',
+    'Trena a laser',
+    'GPS portátil',
+    'Rádio comunicador',
+    'Notebook / Tablet',
+    'Tenda de campanha',
+    'Caixa d\'água portátil',
+    'Motosserra',
+    'Pá / Enxada',
+    'Colete salva-vidas',
+    'Lanterna profissional',
+    'Extintor de incêndio',
+  ],
+};
+
+// Configuração de cada catálogo
+const DB_CONFIG = {
+  'specialties':    { inputId:'db-specialty-input',     listId:'db-specialties-list',     datalistId:'dl-specialties'     },
+  'transport-types':{ inputId:'db-transport-type-input', listId:'db-transport-types-list', datalistId:'dl-transport-types' },
+  'equip-types':    { inputId:'db-equip-type-input',     listId:'db-equip-types-list',     datalistId:'dl-equip-types'     },
+};
+
+function showDbTab(key, btn){
+  document.querySelectorAll('.db-tab-panel').forEach(p=>p.style.display='none');
+  document.getElementById('dbtab-'+key).style.display='block';
+  document.querySelectorAll('#db-tab-row .tab-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+
+function addDbItem(key){
+  const cfg = DB_CONFIG[key];
+  const input = document.getElementById(cfg.inputId);
+  const val = input.value.trim();
+  if(!val){ showNotif('⚠️ Digite um valor antes de adicionar'); return; }
+  if(catalog[key].includes(val)){ showNotif('⚠️ Este item já existe na lista'); return; }
+  catalog[key].push(val);
+  input.value = '';
+  renderDbList(key);
+  refreshDatalist(key);
+  showNotif('✅ Item adicionado!');
+}
+
+function removeDbItem(key, idx){
+  catalog[key].splice(idx, 1);
+  renderDbList(key);
+  refreshDatalist(key);
+  showNotif('🗑 Item removido');
+}
+
+function startEditDbItem(key, idx){
+  const listId = DB_CONFIG[key].listId;
+  const input = document.querySelector(`#${listId} [data-idx="${idx}"] .db-item-text`);
+  if(input){ input.focus(); input.select(); }
+}
+
+function saveDbItemEdit(key, idx, newVal){
+  const trimmed = newVal.trim();
+  if(!trimmed){ renderDbList(key); return; } // se vazio, cancela
+  catalog[key][idx] = trimmed;
+  renderDbList(key);
+  refreshDatalist(key);
+  showNotif('✅ Item atualizado!');
+}
+
+function renderDbList(key){
+  const cfg = DB_CONFIG[key];
+  const listEl = document.getElementById(cfg.listId);
+  if(!catalog[key].length){
+    listEl.innerHTML = `<div class="db-empty">Nenhum item cadastrado. Use o campo acima para adicionar.</div>`;
+    return;
+  }
+  listEl.innerHTML = catalog[key].map((item, idx) => `
+    <div class="db-item" data-idx="${idx}">
+      <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-4);width:22px;flex-shrink:0;text-align:right;">${idx+1}</span>
+      <input class="db-item-text" value="${item.replace(/"/g,'&quot;')}"
+        onblur="saveDbItemEdit('${key}',${idx},this.value)"
+        onkeydown="if(event.key==='Enter'){this.blur();} if(event.key==='Escape'){this.value=catalog['${key}'][${idx}];this.blur();}"
+        title="Clique para editar">
+      <div class="db-item-actions">
+        <button class="btn btn-ghost btn-sm" onclick="startEditDbItem('${key}',${idx})" title="Editar">✏️</button>
+        <button class="btn btn-ghost btn-sm" onclick="removeDbItem('${key}',${idx})" style="color:var(--red);" title="Excluir">🗑</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function refreshDatalist(key){
+  const cfg = DB_CONFIG[key];
+  const dl = document.getElementById(cfg.datalistId);
+  if(!dl) return;
+  dl.innerHTML = catalog[key].map(item => `<option value="${item.replace(/"/g,'&quot;')}"></option>`).join('');
+}
+
+function initCatalogs(){
+  Object.keys(DB_CONFIG).forEach(key => {
+    renderDbList(key);
+    refreshDatalist(key);
+  });
+}
+
 // ══════ INIT ══════
 buildGutUI(gutRescue,'r','gutR');
 buildGutUI(gutGeral,'g','gutG');
 renderActions(); renderHumans(); renderTransports(); renderEquips();
 updateBadges(); updateStats();
+initCatalogs();
+applyMobileLayout();
 
 // Demo data
 setTimeout(()=>{
